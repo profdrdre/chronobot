@@ -14,10 +14,10 @@
             console.log("sdf");
             this.on('pointerdown',this.tokenClicked)
             this.state = startState;
-            this.steps = 30; // steps per animation
+            this.steps = 80; // steps per animation
 
-            this.target = {x: 216, y:64};
-            this.delta = {x: 5, y:0};
+            this.target = {x: 0, y:0};
+            this.delta = {x: 0, y:0};
 
             this.statePositions = {};
             this.stateTransitions = {};
@@ -48,8 +48,8 @@
         tokenClicked(){
             this.state = this.stateTransitions[this.state];
             this.target = this.statePositions[this.state];
-            this.delta.x = parseInt((this.target.x - this.x) / this.steps);
-            this.delta.y = parseInt((this.target.y - this.y) / this.steps);
+            this.delta.x = Math.floor((this.target.x - this.x) / this.steps);
+            this.delta.y = Math.floor((this.target.y - this.y) / this.steps);
 
             automa.ticker.add(this.tokenMover);
 
