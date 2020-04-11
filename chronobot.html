@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+</head>
+<body>
+<canvas id="mycanvas"></canvas>
+<script>
+
+    class Token extends PIXI.Sprite {
+
+        constructor(texture) {
+            super(texture)
+            console.log("sdf");
+            this.on('pointerdown',this.tokenClicked)
+            this.state = 1;
+
+            this.tokenMover3 = () => {
+                console.log("moving 3 "+this.x.toString());
+                this.x += 25;
+                if ((216 - this.x) < 5) {
+                    console.log("home!");
+                    this.x = 216;
+                    console.log("remove!!")
+                    automa.ticker.remove(this.tokenMover3);
+                }
+            }
+
+        }
+
+        defineMoves(num, xvalues, yvalues, speeds){
+
+
+        }
+
+
+        tokenClicked(){
+            console.log("added!!");
+            automa.ticker.add(this.tokenMover3);
+
+        }
+    }
+
+    // function tokenMove2()
+    // {
+    //     console.log("moving 2 ");
+    //     t1.x += 5;
+    //     if ((216 - t1.x) < 5) {
+    //         console.log("home!");
+    //         t1.x = 216;
+    //         automa.ticker.remove(this.tokenMover3());
+    //     }
+    // }
+
+    const canvas = document.getElementById('mycanvas');
+
+    const automa = new PIXI.Application({
+        view: canvas,
+        width: 1482,
+        height: 1080,
+        resolution: 1,
+        autoDensity: true
+    });
+
+
+    const board_texture = PIXI.Texture.from('images/board.png');
+    const board_img = new PIXI.Sprite(board_texture);
+    board_img.x= 0 ;
+    board_img.y = 0;
+    automa.stage.addChild(board_img);
+
+    const t1_texture = PIXI.Texture.from('images/t1.png');
+    const t1 = new Token(t1_texture);
+
+    t1.x = 48;
+    t1.y = 64;
+
+    // Opt-in to interactivity
+    t1.interactive = true;
+
+    // Shows hand cursor
+    t1.buttonMode = true;
+
+    // Pointers normalize touch and mouse
+  //  t1.on('pointerdown', onClick);
+
+
+    // function onClick() {
+    //     automa.ticker.add(() => {
+    //         // just for fun, let's rotate mr rabbit a little
+    //         t1.x += 5;
+    //         if ((216 - t1.x )< 5) {
+    //             t1.x = 216
+    //         }
+    //      })
+    // }
+
+
+
+
+    automa.stage.addChild(t1);
+   // automa.ticker.add(tokenMove2(),this)
+   // automa.ticker.add(tokenMover3 = () => {t1.x += 5;})
+
+
+
+</script>
+</body>
+</html>
