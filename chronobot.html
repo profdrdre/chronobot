@@ -9,48 +9,52 @@
 
     class Token extends PIXI.Sprite {
 
-        constructor(texture) {
+        constructor(texture, startState) {
             super(texture)
             console.log("sdf");
             this.on('pointerdown',this.tokenClicked)
-            this.state = 1;
+            this.state = startState;
+            this.steps = 30; // steps per animation
 
-            this.tokenMover3 = () => {
-                console.log("moving 3 "+this.x.toString());
-                this.x += 25;
-                if ((216 - this.x) < 5) {
-                    console.log("home!");
-                    this.x = 216;
-                    console.log("remove!!")
-                    automa.ticker.remove(this.tokenMover3);
+            this.target = {x: 216, y:64};
+            this.delta = {x: 5, y:0};
+
+            this.statePositions = {};
+            this.stateTransitions = {};
+
+
+            this.tokenMover = () => {
+                this.x += this.delta.x;
+                this.y += this.delta.y;
+                if (Math.abs(this.target.x - this.x) < Math.abs(this.delta.x)) {
+                    this.x = this.target.x;
+                    this.y = this.target.y;
+                    automa.ticker.remove(this.tokenMover);
                 }
+                //console.log("tick "+this.target.x.toString())
             }
 
         }
 
-        defineMoves(num, xvalues, yvalues, speeds){
+        setStatePositions(states, positions) {
+            states.forEach((value,index)=>{ this.statePositions[value]= positions[index];})
+        }
 
-
+        setStateTransitions(transitions) {
+            this.stateTransitions = transitions;
         }
 
 
         tokenClicked(){
-            console.log("added!!");
-            automa.ticker.add(this.tokenMover3);
+            this.state = this.stateTransitions[this.state];
+            this.target = this.statePositions[this.state];
+            this.delta.x = parseInt((this.target.x - this.x) / this.steps);
+            this.delta.y = parseInt((this.target.y - this.y) / this.steps);
+
+            automa.ticker.add(this.tokenMover);
 
         }
     }
-
-    // function tokenMove2()
-    // {
-    //     console.log("moving 2 ");
-    //     t1.x += 5;
-    //     if ((216 - t1.x) < 5) {
-    //         console.log("home!");
-    //         t1.x = 216;
-    //         automa.ticker.remove(this.tokenMover3());
-    //     }
-    // }
 
     const canvas = document.getElementById('mycanvas');
 
@@ -62,7 +66,6 @@
         autoDensity: true
     });
 
-
     const board_texture = PIXI.Texture.from('images/board.png');
     const board_img = new PIXI.Sprite(board_texture);
     board_img.x= 0 ;
@@ -70,37 +73,34 @@
     automa.stage.addChild(board_img);
 
     const t1_texture = PIXI.Texture.from('images/t1.png');
-    const t1 = new Token(t1_texture);
+    const t6_texture = PIXI.Texture.from('images/t6.png');
+    const t1 = new Token(t1_texture, 1);
+    const t6 = new Token(t6_texture, 12);
+
+
 
     t1.x = 48;
     t1.y = 64;
+    t6.x = 48;
+    t6.y = 800;
 
     // Opt-in to interactivity
     t1.interactive = true;
-
-    // Shows hand cursor
     t1.buttonMode = true;
+    t6.interactive = true;
+    t6.buttonMode = true;
 
-    // Pointers normalize touch and mouse
-  //  t1.on('pointerdown', onClick);
+    // define behavior
+    t1.setStatePositions([1,2,3], [{x: 48, y:64},{x: 208, y:64},{x: 368, y:64}]);
+    t1.setStateTransitions({1:2, 2:3, 3:1});
 
-
-    // function onClick() {
-    //     automa.ticker.add(() => {
-    //         // just for fun, let's rotate mr rabbit a little
-    //         t1.x += 5;
-    //         if ((216 - t1.x )< 5) {
-    //             t1.x = 216
-    //         }
-    //      })
-    // }
-
-
+    t6.setStatePositions([12,13], [{x: 48, y:800},{x: 208, y:800}]);
+    t6.setStateTransitions({12:13, 13:12});
 
 
     automa.stage.addChild(t1);
-   // automa.ticker.add(tokenMove2(),this)
-   // automa.ticker.add(tokenMover3 = () => {t1.x += 5;})
+    automa.stage.addChild(t6);
+
 
 
 
