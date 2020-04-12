@@ -7,17 +7,36 @@
 <canvas id="mycanvas"></canvas>
 <script>
 
-    class Token extends PIXI.Sprite {
+    const size_normal=1,
+        size_left=2,
+        size_right=3;
 
-        constructor(texture, startState) {
-            super(texture)
-            console.log("sdf");
-            this.on('pointerdown',this.tokenClicked)
+
+    class Token extends PIXI.Container {
+
+
+        constructor(texture, startState, x, y) {
+            super()
+
+            this.image = new PIXI.Sprite(texture);
+
+            this.image.interactive = true;
+            this.image.buttonMode = true;
+            this.x = x;
+            this.y = y;
+
+            this.addChild(this.image)
+
+            this.image.on('pointerdown',this.tokenClicked)
             this.state = startState;
             this.steps = 30; // steps per animation
+            this.size = size_normal;
 
             this.target = {x: 0, y:0};
             this.delta = {x: 0, y:0};
+            this.imgtarget = {x: 0, y:0, scale :1};
+            this.imgdelta = {x: 0, y:0, scale :0};
+
 
             this.statePositions = {};
             this.stateTransitions = {};
@@ -34,6 +53,24 @@
                 //console.log("tick "+this.target.x.toString())
             }
 
+            this.tokenResizer = () => {
+                this.image.x += this.imgdelta.x;
+                this.image.y += this.imgdelta.y;
+                this.image.scale.x += this.imgdelta.scale;
+                this.image.scale.y += this.imgdelta.scale;
+                console.log("tick");
+                if (Math.abs(this.imgtarget.x - this.image.x) < Math.abs(this.imgdelta.x)) {
+                    this.image.x = this.imgtarget.x;
+                    this.image.y = this.imgtarget.y;
+                    this.image.scale.x = this.imgtarget.scale;
+                    this.image.scale.y = this.imgtarget.scale;
+                    automa.ticker.remove(this.tokenResizer);
+                }
+                //console.log("tick "+this.target.x.toString())
+            }
+
+
+
         }
 
         setStatePositions(states, positions) {
@@ -44,14 +81,39 @@
             this.stateTransitions = transitions;
         }
 
+        resize(size){
+            if (size==size_left && this.size!=size_left){
+                this.imgtarget.x = -10;
+                this.imgtarget.y = -10;
+                this.imgtarget.scale = .75;
+            }
+            else if (size==size_right && this.size!=size_right){
+                this.imgtarget.x = 40;
+                this.imgtarget.y = 40;
+                this.imgtarget.scale = .75;
+            }
+            else if (size==size_normal && this.size!=size_normal){
+                this.imgtarget.x = 0;
+                this.imgtarget.y = 0;
+                this.imgtarget.scale = 1;
+            }
+
+            this.imgdelta.x = ((this.imgtarget.x - this.image.x) / this.steps);
+            this.imgdelta.y = ((this.imgtarget.y - this.image.y) / this.steps);
+            this.imgdelta.scale = ((this.imgtarget.scale - this.image.scale.x) / this.steps);
+
+            automa.ticker.add(this.tokenResizer);
+
+        }
 
         tokenClicked(){
-            this.state = this.stateTransitions[this.state];
-            this.target = this.statePositions[this.state];
-            this.delta.x = ((this.target.x - this.x) / this.steps);
-            this.delta.y = ((this.target.y - this.y) / this.steps);
+            let container = this.parent;
+            container.state = container.stateTransitions[container.state];
+            container.target = container.statePositions[container.state];
+            container.delta.x = ((container.target.x - container.x) / container.steps);
+            container.delta.y = ((container.target.y - container.y) / container.steps);
 
-            automa.ticker.add(this.tokenMover);
+            automa.ticker.add(container.tokenMover);
 
         }
     }
@@ -74,32 +136,35 @@
 
     const t1_texture = PIXI.Texture.from('images/t1.png');
     const t6_texture = PIXI.Texture.from('images/t6.png');
-    const t1 = new Token(t1_texture, 1);
-    const t6 = new Token(t6_texture, 12);
+    const t1 = new Token(t1_texture, 1, 48, 64);
+    const t1copy = new Token(t1_texture, 1, 48, 64);
+
+    //   const t6 = new Token(t6_texture, 12);
 
 
-
+/*
     t1.x = 48;
     t1.y = 64;
     t6.x = 48;
     t6.y = 800;
+*/
 
-    // Opt-in to interactivity
-    t1.interactive = true;
-    t1.buttonMode = true;
-    t6.interactive = true;
-    t6.buttonMode = true;
 
     // define behavior
     t1.setStatePositions([1,2,3], [{x: 48, y:64},{x: 208, y:64},{x: 368, y:64}]);
     t1.setStateTransitions({1:2, 2:3, 3:1});
-
-    t6.setStatePositions([12,13], [{x: 48, y:800},{x: 208, y:800}]);
-    t6.setStateTransitions({12:13, 13:12});
+    t1copy.setStatePositions([1,2,3], [{x: 48, y:64},{x: 208, y:64},{x: 368, y:64}]);
+    t1copy.setStateTransitions({1:2, 2:3, 3:1});
+ //   t6.setStatePositions([12,13], [{x: 48, y:800},{x: 208, y:800}]);
+ //   t6.setStateTransitions({12:13, 13:12});
 
 
     automa.stage.addChild(t1);
-    automa.stage.addChild(t6);
+    automa.stage.addChild(t1copy);
+
+    t1.resize(size_right);
+    t1copy.resize(size_left);
+ //   automa.stage.addChild(t6);
 
 
 
