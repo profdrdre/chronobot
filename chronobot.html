@@ -22,12 +22,13 @@
 
             this.image.interactive = true;
             this.image.buttonMode = true;
+            this.image.anchor = {x: .5, y:.5}
             this.x = x;
             this.y = y;
 
             this.addChild(this.image)
 
-            this.image.on('pointerdown',this.tokenClicked)
+            this.image.on('pointerdown',this.advance)
             this.state = startState;
             this.steps = 30; // steps per animation
             this.size = size_normal;
@@ -45,7 +46,8 @@
             this.tokenMover = () => {
                 this.x += this.delta.x;
                 this.y += this.delta.y;
-                if (Math.abs(this.target.x - this.x) < Math.abs(this.delta.x)) {
+                if (Math.abs(this.target.x - this.x) < Math.abs(this.delta.x) ||
+                    Math.abs(this.target.y - this.y) < Math.abs(this.delta.y)) {
                     this.x = this.target.x;
                     this.y = this.target.y;
                     automa.ticker.remove(this.tokenMover);
@@ -58,8 +60,9 @@
                 this.image.y += this.imgdelta.y;
                 this.image.scale.x += this.imgdelta.scale;
                 this.image.scale.y += this.imgdelta.scale;
-                console.log("tick");
-                if (Math.abs(this.imgtarget.x - this.image.x) < Math.abs(this.imgdelta.x)) {
+                //console.log("tick");
+                if (Math.abs(this.imgtarget.x - this.image.x) < Math.abs(this.imgdelta.x) ||
+                    Math.abs(this.imgtarget.y - this.image.y) < Math.abs(this.imgdelta.y)) {
                     this.image.x = this.imgtarget.x;
                     this.image.y = this.imgtarget.y;
                     this.image.scale.x = this.imgtarget.scale;
@@ -83,14 +86,14 @@
 
         resize(size){
             if (size==size_left && this.size!=size_left){
-                this.imgtarget.x = -10;
-                this.imgtarget.y = -10;
-                this.imgtarget.scale = .75;
+                this.imgtarget.x = -22;
+                this.imgtarget.y = -22;
+                this.imgtarget.scale = .7;
             }
             else if (size==size_right && this.size!=size_right){
-                this.imgtarget.x = 40;
-                this.imgtarget.y = 40;
-                this.imgtarget.scale = .75;
+                this.imgtarget.x = 22;
+                this.imgtarget.y = 22;
+                this.imgtarget.scale = .7;
             }
             else if (size==size_normal && this.size!=size_normal){
                 this.imgtarget.x = 0;
@@ -106,7 +109,7 @@
 
         }
 
-        tokenClicked(){
+        advance(){
             let container = this.parent;
             container.state = container.stateTransitions[container.state];
             container.target = container.statePositions[container.state];
@@ -135,35 +138,57 @@
     automa.stage.addChild(board_img);
 
     const t1_texture = PIXI.Texture.from('images/t1.png');
+    const t2_texture = PIXI.Texture.from('images/t2.png');
+    const t3_texture = PIXI.Texture.from('images/t3.png');
+    const t4_texture = PIXI.Texture.from('images/t4.png');
+    const t5_texture = PIXI.Texture.from('images/t5.png');
     const t6_texture = PIXI.Texture.from('images/t6.png');
-    const t1 = new Token(t1_texture, 1, 48, 64);
-    const t1copy = new Token(t1_texture, 1, 48, 64);
-
-    //   const t6 = new Token(t6_texture, 12);
 
 
-/*
-    t1.x = 48;
-    t1.y = 64;
-    t6.x = 48;
-    t6.y = 800;
-*/
+
+
+    const t1 = new Token(t1_texture, 1, 95, 112);
+    const t2 = new Token(t2_texture, 5, 255, 464);
+    const t3 = new Token(t3_texture, 7, 573, 464);
+    const t4 = new Token(t4_texture, 8, 415, 625);
+    const t5 = new Token(t5_texture, 11, 573, 625);
+    const t6 = new Token(t6_texture, 12, 95, 848);
 
 
     // define behavior
-    t1.setStatePositions([1,2,3], [{x: 48, y:64},{x: 208, y:64},{x: 368, y:64}]);
+    t1.setStatePositions([1,2,3], [{x: 95, y:112},{x: 254, y:112},{x: 415, y:112}]);
     t1.setStateTransitions({1:2, 2:3, 3:1});
-    t1copy.setStatePositions([1,2,3], [{x: 48, y:64},{x: 208, y:64},{x: 368, y:64}]);
-    t1copy.setStateTransitions({1:2, 2:3, 3:1});
- //   t6.setStatePositions([12,13], [{x: 48, y:800},{x: 208, y:800}]);
- //   t6.setStateTransitions({12:13, 13:12});
+
+    t2.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
+        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
+    t2.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
+
+    t3.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
+        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
+    t3.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
+
+    t4.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
+        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
+    t4.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
+
+    t5.setStatePositions([4,5,6,7,8,9,10,11], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
+        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}, {x:573, y: 625}]);
+    t5.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4,11:8});
+
+
+
+    t6.setStatePositions([12,13], [{x: 95, y:848},{x: 255, y:848}]);
+    t6.setStateTransitions({12:13, 13:12});
 
 
     automa.stage.addChild(t1);
-    automa.stage.addChild(t1copy);
+    automa.stage.addChild(t2);
+    automa.stage.addChild(t3);
+    automa.stage.addChild(t4);
+    automa.stage.addChild(t5);
+    automa.stage.addChild(t6);
 
-    t1.resize(size_right);
-    t1copy.resize(size_left);
+
  //   automa.stage.addChild(t6);
 
 
