@@ -3,6 +3,8 @@
 <head>
     <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="numbertokens.js"></script>
+    <script src="workertokens.js"></script>
+
 </head>
 <body>
 <canvas id="mycanvas"></canvas>
@@ -23,11 +25,15 @@
     automa.stage.scale.x=global_scaling;
     automa.stage.scale.y=global_scaling;
 
+    //  the board
+
     const board_texture = PIXI.Texture.from('images/board.png');
     const board = new PIXI.Sprite(board_texture);
     board.x= 0 ;
     board.y = 0;
     automa.stage.addChild(board);
+
+    // number tokens + their states
 
     const states = {};
     const statePos = [{x: 95, y:112},{x: 254, y:112},{x: 415, y:112},
@@ -52,6 +58,24 @@
         tokens.push(newToken);
         board.addChild(newToken);
     }
+
+    // worker token
+
+    const workerPositions = [{x:709, y:601}, {x:819, y:601},{x:929, y:601},{x:1037, y:601}]
+
+    const genius_texture = PIXI.Texture.from('images/genius.png');
+    const admin_texture = PIXI.Texture.from('images/admin.png');
+    const engineer_texture = PIXI.Texture.from('images/engineer.png');
+    const scientist_texture = PIXI.Texture.from('images/scientist.png');
+    const geniusToken = new WorkerToken(genius_texture,workerPositions[0],true);
+    const adminToken = new WorkerToken(admin_texture,workerPositions[1],true);
+    const engineerToken = new WorkerToken(engineer_texture,workerPositions[2],true);
+    const scientistToken = new WorkerToken(scientist_texture,workerPositions[3],true);
+
+    board.addChild(geniusToken);
+    board.addChild(adminToken);
+    board.addChild(engineerToken);
+    board.addChild(scientistToken);
 
 
 </script>
