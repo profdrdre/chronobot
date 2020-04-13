@@ -37,6 +37,37 @@
             this.tokens.delete(token)
         }
 
+        resolve(){
+            if (this.tokens.size === 1) {
+                let firstToken = this.tokens.values().next().value;
+                if (firstToken.size !== size_normal){
+                    firstToken.resize(size_normal)
+                }
+            }
+            if (this.tokens.size === 2) {
+                const it = this.tokens.values();
+                let firstToken = it.next().value;
+                let secondToken = it.next().value;
+                firstToken.resize(size_left);
+                secondToken.resize(size_right);
+            }
+            if (this.tokens.size === 3) {
+                const it = this.tokens.values();
+                let firstToken = it.next().value;
+                let secondToken = it.next().value;
+                let thirdToken = it.next().value;
+                if (firstToken.name>secondToken.name && firstToken.name>thirdToken.name){
+                    firstToken.advance();
+                }
+                else if (secondToken.name>firstToken.name && secondToken.name>thirdToken.name){
+                    secondToken.advance();
+                }
+                else {
+                    thirdToken.advance();
+                }
+            }
+        }
+
     }
 
 
@@ -48,18 +79,17 @@
             this.name = name;
             this.image = new PIXI.Sprite(texture);
             this.state = startState;
-            this.state.addToken(this.name);
+            this.state.addToken(this);
 
 
-            this.image.interactive = true;
-            this.image.buttonMode = true;
+            this.interactive = true;
             this.image.anchor = {x: .5, y:.5}
             this.x = this.state.position.x;
             this.y = this.state.position.y;
 
             this.addChild(this.image)
 
-            this.image.on('pointerdown',this.advance)
+            this.on('pointerdown',this.advance)
             this.state = startState;
             this.steps = global_steps; // steps per animation
             this.size = size_normal;
@@ -102,21 +132,23 @@
         }
 
         resize(size){
-            if (size==size_left && this.size!=size_left){
+            if (size===size_left && this.size!==size_left){
                 this.imgtarget.x = -22;
                 this.imgtarget.y = -22;
                 this.imgtarget.scale = .7;
             }
-            else if (size==size_right && this.size!=size_right){
+            else if (size===size_right && this.size!==size_right){
                 this.imgtarget.x = 22;
                 this.imgtarget.y = 22;
                 this.imgtarget.scale = .7;
             }
-            else if (size==size_normal && this.size!=size_normal){
+            else if (size===size_normal && this.size!==size_normal){
                 this.imgtarget.x = 0;
                 this.imgtarget.y = 0;
                 this.imgtarget.scale = 1;
             }
+
+            this.size = size;
 
             this.imgdelta.x = ((this.imgtarget.x - this.image.x) / this.steps);
             this.imgdelta.y = ((this.imgtarget.y - this.image.y) / this.steps);
@@ -127,15 +159,16 @@
         }
 
         advance(){
-            let container = this.parent;
-            container.state.removeToken(container.name);
-            container.state = container.state.next;
-            container.state.addToken(container.name);
-            container.target = container.state.position;
-            container.delta.x = ((container.target.x - container.x) / container.steps);
-            container.delta.y = ((container.target.y - container.y) / container.steps);
+            this.state.removeToken(this);
+            this.state.resolve();
+            this.state = this.state.next;
+            this.state.addToken(this);
+            this.state.resolve();
+            this.target = this.state.position;
+            this.delta.x = ((this.target.x - this.x) / this.steps);
+            this.delta.y = ((this.target.y - this.y) / this.steps);
 
-            automa.ticker.add(container.tokenMover);
+            automa.ticker.add(this.tokenMover);
 
         }
     }
