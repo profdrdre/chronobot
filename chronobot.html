@@ -11,36 +11,63 @@
         size_left=2,
         size_right=3;
 
+    const global_scaling = 3/4,
+    global_steps = 30;
+
+
+    class State {
+
+        constructor(name, pos){
+            this.name = name;
+            this.position = pos ;
+
+            this.next=this;
+            this.tokens = new Set();
+        }
+
+        setNext(followingState){
+            this.next=followingState;
+        }
+
+        addToken(token){
+            this.tokens.add(token);
+        }
+
+        removeToken(token){
+            this.tokens.delete(token)
+        }
+
+    }
+
 
     class Token extends PIXI.Container {
 
 
-        constructor(texture, startState, x, y) {
+        constructor(name, texture, startState ) {
             super()
-
+            this.name = name;
             this.image = new PIXI.Sprite(texture);
+            this.state = startState;
+            this.state.addToken(this.name);
+
 
             this.image.interactive = true;
             this.image.buttonMode = true;
             this.image.anchor = {x: .5, y:.5}
-            this.x = x;
-            this.y = y;
+            this.x = this.state.position.x;
+            this.y = this.state.position.y;
 
             this.addChild(this.image)
 
             this.image.on('pointerdown',this.advance)
             this.state = startState;
-            this.steps = 30; // steps per animation
+            this.steps = global_steps; // steps per animation
             this.size = size_normal;
 
             this.target = {x: 0, y:0};
             this.delta = {x: 0, y:0};
             this.imgtarget = {x: 0, y:0, scale :1};
             this.imgdelta = {x: 0, y:0, scale :0};
-
-
-            this.statePositions = {};
-            this.stateTransitions = {};
 
 
             this.tokenMover = () => {
@@ -52,7 +79,6 @@
                     this.y = this.target.y;
                     automa.ticker.remove(this.tokenMover);
                 }
-                //console.log("tick "+this.target.x.toString())
             }
 
             this.tokenResizer = () => {
@@ -69,19 +95,10 @@
                     this.image.scale.y = this.imgtarget.scale;
                     automa.ticker.remove(this.tokenResizer);
                 }
-                //console.log("tick "+this.target.x.toString())
             }
 
 
 
-        }
-
-        setStatePositions(states, positions) {
-            states.forEach((value,index)=>{ this.statePositions[value]= positions[index];})
-        }
-
-        setStateTransitions(transitions) {
-            this.stateTransitions = transitions;
         }
 
         resize(size){
@@ -111,8 +128,10 @@
 
         advance(){
             let container = this.parent;
-            container.state = container.stateTransitions[container.state];
-            container.target = container.statePositions[container.state];
+            container.state.removeToken(container.name);
+            container.state = container.state.next;
+            container.state.addToken(container.name);
+            container.target = container.state.position;
             container.delta.x = ((container.target.x - container.x) / container.steps);
             container.delta.y = ((container.target.y - container.y) / container.steps);
 
@@ -125,73 +144,44 @@
 
     const automa = new PIXI.Application({
         view: canvas,
-        width: 1482,
-        height: 1080,
+        width: 1482 * global_scaling,
+        height: 1080 * global_scaling,
         resolution: 1,
         autoDensity: true
     });
 
+    automa.stage.scale.x=global_scaling;
+    automa.stage.scale.y=global_scaling;
+
     const board_texture = PIXI.Texture.from('images/board.png');
-    const board_img = new PIXI.Sprite(board_texture);
-    board_img.x= 0 ;
-    board_img.y = 0;
-    automa.stage.addChild(board_img);
+    const board = new PIXI.Sprite(board_texture);
+    board.x= 0 ;
+    board.y = 0;
+    automa.stage.addChild(board);
 
-    const t1_texture = PIXI.Texture.from('images/t1.png');
-    const t2_texture = PIXI.Texture.from('images/t2.png');
-    const t3_texture = PIXI.Texture.from('images/t3.png');
-    const t4_texture = PIXI.Texture.from('images/t4.png');
-    const t5_texture = PIXI.Texture.from('images/t5.png');
-    const t6_texture = PIXI.Texture.from('images/t6.png');
+    const states = {};
+    const statePos = [{x: 95, y:112},{x: 254, y:112},{x: 415, y:112},
+        {x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
+        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}, {x:573, y: 625},
+        {x: 95, y:848},{x: 255, y:848}];
 
-
-
-
-    const t1 = new Token(t1_texture, 1, 95, 112);
-    const t2 = new Token(t2_texture, 5, 255, 464);
-    const t3 = new Token(t3_texture, 7, 573, 464);
-    const t4 = new Token(t4_texture, 8, 415, 625);
-    const t5 = new Token(t5_texture, 11, 573, 625);
-    const t6 = new Token(t6_texture, 12, 95, 848);
+    const stateTransition = {1:2, 2:3, 3:1,4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4,11:8,12:13, 13:12};
+    const stateStart = [1,5,7,8,11,12];
 
 
-    // define behavior
-    t1.setStatePositions([1,2,3], [{x: 95, y:112},{x: 254, y:112},{x: 415, y:112}]);
-    t1.setStateTransitions({1:2, 2:3, 3:1});
+    for (let i = 1; i<=13; i++) {
+        states[i]= new State(i, statePos[i-1]);
+    }
+    for (const [key, value] of Object.entries(states)) {
+        value.setNext(states[stateTransition[key]])
+    }
 
-    t2.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
-        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
-    t2.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
-
-    t3.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
-        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
-    t3.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
-
-    t4.setStatePositions([4,5,6,7,8,9,10], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
-        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}]);
-    t4.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4});
-
-    t5.setStatePositions([4,5,6,7,8,9,10,11], [{x: 95, y:464},{x: 255, y:464},{x: 415, y:464},{x: 573, y:464},
-        {x: 415, y:625},{x: 255, y:625},{x: 95, y:625}, {x:573, y: 625}]);
-    t5.setStateTransitions({4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4,11:8});
-
-
-
-    t6.setStatePositions([12,13], [{x: 95, y:848},{x: 255, y:848}]);
-    t6.setStateTransitions({12:13, 13:12});
-
-
-    automa.stage.addChild(t1);
-    automa.stage.addChild(t2);
-    automa.stage.addChild(t3);
-    automa.stage.addChild(t4);
-    automa.stage.addChild(t5);
-    automa.stage.addChild(t6);
-
-
- //   automa.stage.addChild(t6);
-
-
+    const tokens = [];
+    for(let i=1;i<=6;i++){
+        const newToken = new Token(i, PIXI.Texture.from('images/t'+i.toString()+'.png'), states[stateStart[i-1]]);
+        tokens.push(newToken);
+        board.addChild(newToken);
+    }
 
 
 </script>
