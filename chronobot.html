@@ -12,6 +12,24 @@
     const global_scaling = 3/4,
     global_steps = 30;
 
+    class Board extends PIXI.Sprite {
+
+        constructor(texture) {
+            super(texture);
+        }
+
+        validateWorkers(){
+            if (scientistToken.number>0 && engineerToken.number>0 && adminToken.number>0 && geniusToken.number>0){
+                scientistToken.remove();
+                engineerToken.remove();
+                adminToken.remove();
+                geniusToken.remove();
+            }
+        }
+
+
+    }
+
     const canvas = document.getElementById('mycanvas');
 
     const automa = new PIXI.Application({
@@ -28,7 +46,7 @@
     //  the board
 
     const board_texture = PIXI.Texture.from('images/board.png');
-    const board = new PIXI.Sprite(board_texture);
+    const board = new Board(board_texture);
     board.x= 0 ;
     board.y = 0;
     automa.stage.addChild(board);
@@ -67,10 +85,10 @@
     const admin_texture = PIXI.Texture.from('images/admin.png');
     const engineer_texture = PIXI.Texture.from('images/engineer.png');
     const scientist_texture = PIXI.Texture.from('images/scientist.png');
-    const geniusToken = new WorkerToken(genius_texture,workerPositions[0],true);
-    const adminToken = new WorkerToken(admin_texture,workerPositions[1],true);
-    const engineerToken = new WorkerToken(engineer_texture,workerPositions[2],true);
-    const scientistToken = new WorkerToken(scientist_texture,workerPositions[3],true);
+    const geniusToken = new WorkerToken(genius_texture,workerPositions[0],0);
+    const adminToken = new WorkerToken(admin_texture,workerPositions[1],0);
+    const engineerToken = new WorkerToken(engineer_texture,workerPositions[2],0);
+    const scientistToken = new WorkerToken(scientist_texture,workerPositions[3],0);
 
     board.addChild(geniusToken);
     board.addChild(adminToken);
