@@ -95,6 +95,13 @@
     board.addChild(engineerToken);
     board.addChild(scientistToken);
 
+    const neutronium_texture = PIXI.Texture.from('images/uranium.png');
+    const neutronium = new PIXI.Sprite(neutronium_texture);
+    neutronium.x= 735 ;
+    neutronium.y = 460;
+    automa.stage.addChild(neutronium);
+
+
 
 </script>
 </body>
