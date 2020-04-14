@@ -3,7 +3,9 @@
 <head>
     <script src="https://pixijs.download/release/pixi.min.js"></script>
     <script src="numbertokens.js"></script>
-    <script src="workertokens.js"></script>
+<!--    <script src="workertokens.js"></script>-->
+    <script src="statictokens.js"></script>
+    <script src="slidetokens.js"></script>
 
 </head>
 <body>
@@ -24,6 +26,15 @@
                 engineerToken.remove();
                 adminToken.remove();
                 geniusToken.remove();
+            }
+        }
+
+        validateResources(){
+            if (neutroniumToken.number>0 && uraniumToken.number>0 && goldToken.number>0 && titaniumToken.number>0){
+                neutroniumToken.remove();
+                uraniumToken.remove();
+                goldToken.remove();
+                titaniumToken.remove();
             }
         }
 
@@ -95,11 +106,34 @@
     board.addChild(engineerToken);
     board.addChild(scientistToken);
 
-    const neutronium_texture = PIXI.Texture.from('images/uranium.png');
-    const neutronium = new PIXI.Sprite(neutronium_texture);
-    neutronium.x= 735 ;
-    neutronium.y = 460;
-    automa.stage.addChild(neutronium);
+    const resourcePositions = [{x:735, y:460}, {x:869, y:460},{x:1005, y:460},{x:1137, y:460}]
+    const neutronium_texture = PIXI.Texture.from('images/neutronium.png');
+    const uranium_texture = PIXI.Texture.from('images/uranium.png');
+    const gold_texture = PIXI.Texture.from('images/gold.png');
+    const titanium_texture = PIXI.Texture.from('images/titanium.png');
+    const neutroniumToken = new ResourceToken(neutronium_texture,resourcePositions[0],0);
+    const uraniumToken = new ResourceToken(uranium_texture,resourcePositions[1],0);
+    const goldToken = new ResourceToken(gold_texture,resourcePositions[2],0);
+    const titaniumToken = new ResourceToken(titanium_texture,resourcePositions[3],0);
+
+    board.addChild(neutroniumToken);
+    board.addChild(uraniumToken);
+    board.addChild(goldToken);
+    board.addChild(titaniumToken);
+
+    const supplyPositions ={0:{x:743, y:350},1: {x:810, y:315},2:{x:878, y:315},3: {x:945, y:315}};
+    const supplyTransitions ={0:1,1:2,2:3,3:3};
+    const supplyToken = new SlideToken(PIXI.Texture.from('images/supply.png'),0, supplyPositions, supplyTransitions );
+
+    const timetravelPositions ={0:{x:542, y:226},1: {x:608, y:191},2:{x:674, y:191},3: {x:742, y:191},
+        4:{x:808, y:191},5: {x:876, y:191},6:{x:942, y:191}};
+    const timetravelTransitions ={0:1,1:2,2:3,3:4, 4:5, 5:6, 6:6};
+    const timetravelToken = new SlideToken(PIXI.Texture.from('images/timetravel.png'),0,
+        timetravelPositions, timetravelTransitions );
+
+    board.addChild(supplyToken);
+    board.addChild(timetravelToken);
+
 
 
 
