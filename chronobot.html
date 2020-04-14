@@ -135,6 +135,18 @@
     board.addChild(timetravelToken);
 
 
+    const paradoxTokens = [];
+    const paradoxPositions = [{x: 714, y:92},{x:864, y : 155},{x: 851, y:92}]
+
+
+    for(let j=1;j<=3;j++){
+        const newToken = new StaticToken(PIXI.Texture.from('images/paradox.png'),paradoxPositions[j-1], 0, false,1);
+        if (j===2) newToken.angle= 180;
+        paradoxTokens.push(newToken);
+        board.addChild(newToken);
+    }
+
+
 
 
 </script>

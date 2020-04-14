@@ -1,7 +1,11 @@
 class StaticToken extends PIXI.Sprite {
 
-    constructor(texture, pos, status) {
+    constructor(texture, pos, status, counter, limit) {
         super(texture);
+
+        this.limit = limit;
+
+
         this.x = pos.x;
         this.y = pos.y;
         this.number = status;
@@ -12,9 +16,7 @@ class StaticToken extends PIXI.Sprite {
 
         this.text = new PIXI.Text(this.number.toString(),{fontFamily : 'Arial', dropShadow: 'true',stroke: 'white', fontSize: 32, fontWeight : 'bolder', fill : 0xffffff, align : 'center'});
         this.text.anchor = {x:.5, y:.5};
-        //this.text.x = 40;
-        //this.text.y = 95;
-        this.text.visible = true;
+        this.text.visible = counter;
 
 
         this.addChild(this.text);
@@ -42,10 +44,12 @@ class StaticToken extends PIXI.Sprite {
     }
 
     add() {
-        this.number += 1;
-        if (this.number === 1) this.toogle();
-        this.text.text=this.number.toString();
-        this.text.visible = this.number > 0;
+        if (this.number !== this.limit) {
+            this.number += 1;
+            if (this.number === 1) this.toogle();
+            this.text.text = this.number.toString();
+            this.text.visible = this.number > 0;
+        }
     }
 
     remove() {
@@ -62,7 +66,7 @@ class StaticToken extends PIXI.Sprite {
 class WorkerToken extends StaticToken {
 
     constructor(texture, pos, status) {
-        super(texture,pos,status);
+        super(texture,pos,status, true, 25);
 
         this.text.x = 40;
         this.text.y = 95;
@@ -82,7 +86,7 @@ class WorkerToken extends StaticToken {
 class ResourceToken extends StaticToken {
 
     constructor(texture, pos, status) {
-        super(texture,pos,status);
+        super(texture,pos,status, true, 25);
 
         this.text.x = 30;
         this.text.y = 67;
