@@ -146,8 +146,22 @@
         board.addChild(newToken);
     }
 
+    powerPlantBack = new StaticToken(PIXI.Texture.from('images/power.png'),{x: 750, y:859},0, true,3);
+    powerPlantBack.text.position={x:85, y : 170};
+    factoryBack = new StaticToken(PIXI.Texture.from('images/factories.png'),{x: 930, y:859}, 0, true,3);
+    factoryBack.text.position={x:85, y : 170};
+    habitatBack = new StaticToken(PIXI.Texture.from('images/habitats.png'),{x: 1108, y:859}, 0, true,3);
+    habitatBack.text.position={x:85, y : 170};
+    labBack = new StaticToken(PIXI.Texture.from('images/lab.png'),{x: 1286, y:859}, 0, true,3);
+    labBack.text.position={x:85, y : 170};
+    anomalyBack = new StaticToken(PIXI.Texture.from('images/anomaly.png'),{x: 1010, y:47}, 0, true,3);
+    anomalyBack.text.position={x:85, y : 170};
 
-
+    board.addChild(powerPlantBack);
+    board.addChild(factoryBack);
+    board.addChild(habitatBack);
+    board.addChild(labBack);
+    board.addChild(anomalyBack);
 
 </script>
 </body>
