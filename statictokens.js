@@ -8,6 +8,7 @@ class StaticToken extends PIXI.Sprite {
 
         this.x = pos.x;
         this.y = pos.y;
+        this.counter = counter;
         this.number = status;
         this.interactive = true;
         if (this.number === 0) this.alpha=0;
@@ -16,7 +17,7 @@ class StaticToken extends PIXI.Sprite {
 
         this.text = new PIXI.Text(this.number.toString(),{fontFamily : 'Arial', dropShadow: 'true',stroke: 'white', fontSize: 32, fontWeight : 'bolder', fill : 0xffffff, align : 'center'});
         this.text.anchor = {x:.5, y:.5};
-        this.text.visible = counter;
+        //this.text.visible = counter;
 
 
         this.addChild(this.text);
@@ -48,7 +49,7 @@ class StaticToken extends PIXI.Sprite {
             this.number += 1;
             if (this.number === 1) this.toogle();
             this.text.text = this.number.toString();
-            this.text.visible = this.number > 0;
+            this.text.visible = (this.number > 0) && this.counter;
         }
     }
 
