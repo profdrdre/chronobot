@@ -6,6 +6,8 @@
 <!--    <script src="workertokens.js"></script>-->
     <script src="statictokens.js"></script>
     <script src="slidetokens.js"></script>
+    <script src="counter.js"></script>
+
 
 </head>
 <body>
@@ -45,8 +47,8 @@
 
     const automa = new PIXI.Application({
         view: canvas,
-        width: 1482 * global_scaling,
-        height: 1080 * global_scaling,
+        width: (1482+ 250) * global_scaling,
+        height: (1080 + 0) * global_scaling,
         resolution: 1,
         autoDensity: true
     });
@@ -169,6 +171,22 @@
     board.addChild(anomalyBack);
     board.addChild(superProjectBack);
     board.addChild(exoSuitBack);
+
+    panel = new PIXI.Sprite(PIXI.Texture.from('images/sidepanel.png'));
+    panel.x = 1482;
+    panel.y = 0 ;
+    automa.stage.addChild(panel);
+
+    points = new Counter({x:150, y:195}, 0, 999);
+    points.increase(100);
+    panel.addChild(points);
+    water = new Counter({x:150, y:275}, 0, 999);
+    panel.addChild(water);
+    era = new Counter({x:220, y:52}, 1, 10);
+    panel.addChild(era);
+    phase = new Counter({x:220, y:110}, 1, 10);
+    panel.addChild(phase);
+
 
 </script>
 </body>
