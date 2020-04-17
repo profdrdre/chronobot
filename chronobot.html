@@ -2,11 +2,13 @@
 <html>
 <head>
     <script src="https://pixijs.download/release/pixi.min.js"></script>
+<script src="https://filters.pixijs.download/v3.1.1/pixi-filters.js"></script>
     <script src="numbertokens.js"></script>
-<!--    <script src="workertokens.js"></script>-->
+
     <script src="statictokens.js"></script>
     <script src="slidetokens.js"></script>
     <script src="counter.js"></script>
+    <script src="button.js"></script>
 
 
 </head>
@@ -16,7 +18,7 @@
     const global_scaling = 3/4,
     global_steps = 30;
 
-    class Board extends PIXI.Sprite {
+    class Board extends PIXI.Sprite{
 
         constructor(texture) {
             super(texture);
@@ -178,7 +180,6 @@
     automa.stage.addChild(panel);
 
     points = new Counter({x:150, y:195}, 0, 999);
-    points.increase(100);
     panel.addChild(points);
     water = new Counter({x:150, y:275}, 0, 999);
     panel.addChild(water);
@@ -186,6 +187,27 @@
     panel.addChild(era);
     phase = new Counter({x:220, y:110}, 1, 10);
     panel.addChild(phase);
+
+    button1 = new Button({
+        label: 'Next Bot Action',
+        width: 250,
+        height: 150,
+        x: 125,
+        y: 855,
+        onTap: () => console.log('Play')
+    })
+
+    button2 = new Button({
+        label: 'End Phase',
+        width: 250,
+        height: 150,
+        x: 125,
+        y: 1005,
+        onTap: () => console.log('Play')
+    })
+
+    panel.addChild(button2);
+    panel.addChild(button1);
 
 
 </script>
