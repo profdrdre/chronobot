@@ -10,7 +10,7 @@ class StaticToken extends PIXI.Sprite {
         this.y = pos.y;
         this.counter = counter;
         this.number = status;
-        this.interactive = false;
+        this.interactive = true;
         if (this.number === 0) this.alpha=0;
         this.targetAlpha = 0;
         this.delta = 0;

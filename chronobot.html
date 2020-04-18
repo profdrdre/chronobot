@@ -85,7 +85,7 @@
         {x: 95, y:848},{x: 255, y:848}];
 
     const stateTransition = {1:2, 2:3, 3:1,4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4,11:8,12:13, 13:12};
-    const stateStart = [1,5,7,8,11,12];
+    const stateStart = [3,5,7,8,11,12];
 
 
     for (let i = 1; i<=13; i++) {
@@ -208,7 +208,7 @@
 
 
     button1 = new Button({
-        label: 'Next Bot Action',
+        label: 'Next\nBot Action',
         width: 250,
         height: 150,
         x: 125,
@@ -227,76 +227,205 @@
 
     panel.addChild(button2);
     panel.addChild(button1);
+    button1.visible = false;
 
     let warptileNumber = 8;
-
+    let botActions = 0;
+    let dice = 1
 
     function button2Pressed(){
-        if (phase.number !== 6)
-            phase.increase(1);
-        else {
-            phase.set(2);
-            era.increase(1);
-        }
+
         button1.enable();
 
-        if (phase.number === 2){
+        if (phase.number === 1){
+            phase.set(2);
+            button2Pressed();
+        }
+        else if (phase.number === 2){
             actionText.text = "Chronobot rolls\n for paradoxes last \n add paradoxes\n on board  \n ";
             actionText.visible = true;
-
-            button2.disable()
-            button1.enable();
-            button1.label.text="Done";
-
             for(let j=1;j<=3;j++){
                 paradoxTokens[j-1].interactive = true;
             }
-            button1.settings.onTap = () => waitForUser()
+
+            button2.label.text="Done \nNext Phase";
+            button2.settings.onTap = () => waitForUser();
         }
-        if (phase.number === 3){
+        else if (phase.number === 3){
             let exoNumber = 6;
             if (era.number >4) exoNumber = 4;
-            actionText.text = "Chronobot \n charged up  \n " + exoNumber.toString() + "\n exosuits";
+            actionText.text = "Chronobot \n charged up  \n " + exoNumber.toString() + " exosuits\n Charge yours!";
             actionText.visible = true;
 
-
             exoSuitBack.set(exoNumber);
-            button2.disable()
-            button1.enable();
-            button1.label.text="Got it";
-            button1.settings.onTap = () => waitForUser()
+            button2.label.text="Done \nNext Phase";
+            button2.settings.onTap = () => waitForUser();
 
+        }
+
+        else if (phase.number === 4){
+            actionText.text = "Select your warp tiles!";
+            actionText.visible = true;
+
+            button2.label.text="Done";
+            button2.settings.onTap = () => waitForUser();
+        }
+        else if (phase.number === 5){
+            actionText.text = "Perform your Action \nor ask for \n Chronobot Action";
+            actionText.visible = true;
+
+            button1.visible = true;
+            button1.label.text='Next\nBot Action';
+
+            button2.label.text="Continue to\nnext Phase";
+            button2.disable();
+            botActions = 0;
+            button2.settings.onTap = () => waitForUser();
         }
     }
 
     function button1Pressed(){
-        if (true) {
-            if (phase.number === 4){
-                // draw 0-2 tokens
-                let dice = Math.floor(Math.random()*6) + 1;
-                let draw = 1
-                if (dice === 1) draw = 0;
-                if (dice === 6) draw = 2;
-                if (draw > warptileNumber) draw = warptileNumber;
-                warptileNumber -= draw;
-                actionText.text = "Chronobot selects \n " + draw.toString() + "\n warp tile(s)";
-                actionText.visible = true;
+        if (phase.number === 5){
+            dice = Math.floor(Math.random()*6) + 1;
+            actionText.text = "Chronobot rolled a " + dice.toString()+"\n This means:\n\n";
+            actionText.visible = true;
 
-                button2.disable()
-                button1.enable();
-                button1.label.text="Done";
-                button1.settings.onTap = () => waitForUser()
+
+
+
+            performAction(tokens[dice-1].state.name);
+
+        }
+
+    }
+
+    function performAction(number){
+        if (number == 1 ){  // Take Power Plant
+            // to add is it free ? take exosuit
+            if (powerPlantBack.number == 3){
+                actionText.text += "max. Power Plants\nreached\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+            } else
+            {
+                actionText.text += "Take a Power Plant\nfor Chronobot"
+                powerPlantBack.add(1);
             }
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (number == 2 ){  // Take Power Plant
+            if (timetravelToken.state === 6){
+                actionText.text += "time travel maxed\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+            } else
+            {
+                actionText.text += "Chronobot advanced\n time travel"
+                timetravelToken.advance();
+            }
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (number == 3 ){  // Remove Anomaly
+            if (anomalyBack.number === 0){
+                actionText.text += "No Anomalies\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+            } else if (water.number>=2 && (neutroniumToken.number>= 1 ||
+                uraniumToken.number + goldToken.number + titaniumToken.number >= 2))
+            {
+                if (uraniumToken.number + goldToken.number + titaniumToken.number <= 1)  // have to par with n
+                    neutroniumToken.remove();
+                else
+                    for (let j=1;j<=2;j++){
+                        if (titaniumToken.number>0)
+                            titaniumToken.remove();
+                        else if (goldToken.number>0)
+                            goldToken.remove();
+                        else uraniumToken.remove();
+                    }
+                water.decrease(2);
+                actionText.text += "Chronobot removed\n Anomaly"
+                anomalyBack.remove();
+            } else {
+                actionText.text += "No Ressources\nto remove Anomaly\n Took 2 Water + 1 VP ";
+                water.increase(2);
+                points.increase(1);
+
+            }
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+
+
+        if (number === 12 || number === 11) // take Water
+        {
+            actionText.text += "Chronobot Takes\n 2 Water"
+            water.increase(2);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+
+        botActions += 1;
+        if (botActions >=3 ){
+            button2.enable();
+        }
+
+    }
+
+    function acceptAction() {
+        tokens[dice-1].advance();
+        button1.label.text='Next\nBot Action';
+        actionText.text = "";
+        button1.settings.onTap = () => button1Pressed();
+
+    }
+
+
+    function waitForUser() {
+        button2.settings.onTap = () => button2Pressed();
+        //button1.label.text= "Next Bot Action";
+        actionText.visible = false;
+        // button1.disable();
+        // button2.enable();
+
+        if (phase.number === 2) {
+            for (let j = 1; j <= 3; j++) {
+                paradoxTokens[j - 1].interactive = false;
+            }
+            phase.set(3)
+        }
+        else if (phase.number === 3){
+            phase.set(4);
+        }
+        else if (phase.number === 4){
+            // draw 0-2 tokens
+            dice = Math.floor(Math.random()*6) + 1;
+            let draw = 1
+            if (dice === 1) draw = 0;
+            if (dice === 6) draw = 2;
+            if (draw > warptileNumber) draw = warptileNumber;
+            warptileNumber -= draw;
+            actionText.text = "Chronobot selects \n " + draw.toString() + "\n warp tile(s)";
+            actionText.visible = true;
+
+            button2.label.text="Okay\nNext Phase";
+            button2.settings.onTap = () => waitForUserAgain()
+            phase.set(5);
+        }
+        button2Pressed();
+    }
+
+    function waitForUserAgain() {
+        if (phase.number === 4){
+            phase.set(5);
+            button2Pressed();
         }
     }
 
-    function waitForUser() {
-        button1.settings.onTap = () => button1Pressed();
-        button1.label.text= "Next Bot Action";
-        actionText.visible = false;
-        button1.disable();
-        button2.enable();
-    }
+
+
 
 </script>
 </body>
