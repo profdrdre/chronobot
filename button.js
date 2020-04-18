@@ -37,7 +37,7 @@ class Button extends PIXI.NineSlicePlane {
 
 
         // Main text on the button
-        this.label = new PIXI.Text('')
+        this.label = new PIXI.Text(settings.label)
         this.label.anchor  = {x:0.5, y:0.5};
         this.addChild(this.label);
 
@@ -67,13 +67,13 @@ class Button extends PIXI.NineSlicePlane {
     disable(){
         this.interactive = false;
         this.filters = [new PIXI.filters.AdjustmentFilter({saturation: 0, gamma: 1.6})];
-        this.update();
+     //   this.update();
     }
 
     enable(){
         this.interactive = true;
         this.filters = [];
-        this.update();
+     //   this.update();
     }
 
 
@@ -120,7 +120,7 @@ class Button extends PIXI.NineSlicePlane {
             this.tint = this.settings.tint
         }
 
-        this.label.text = this.settings.label
+        //this.label.text = this.settings.label
         this.label.style = {
             fontSize: this.settings.fontSize + 'px',
             fill: '#ffffff',

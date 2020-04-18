@@ -27,6 +27,16 @@ class Counter extends PIXI.Container {
         if (this.number >= value) {
             this.number -= value;
         }
+        this.text.text = this.number.toString();
     }
+
+    set(value) {
+        if (this.limit >= value) {
+            this.number = value;
+        }
+        this.text.text = this.number.toString();
+    }
+
+
 }
 

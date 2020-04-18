@@ -15,7 +15,7 @@
 <body>
 <canvas id="mycanvas"></canvas>
 <script>
-    const global_scaling = 3/4,
+    const global_scaling = .7,
     global_steps = 30;
 
     class Board extends PIXI.Sprite{
@@ -60,7 +60,7 @@
 
     //  the board
 
-    const board_texture = PIXI.Texture.from('images/board.png');
+    const board_texture = PIXI.Texture.from('images/board-modified.jpg');
     const board = new Board(board_texture);
     board.x= 0 ;
     board.y = 0;
@@ -188,13 +188,22 @@
     phase = new Counter({x:220, y:110}, 1, 10);
     panel.addChild(phase);
 
+    actionText = new PIXI.Text("action to do \n sddf ",{fontFamily : 'Arial',
+        fontSize: 24, fontWeight : 'normal', fill : 0x433656, align : 'center'});
+    actionText.anchor = {x:.5, y:0};
+    actionText.position = {x:125, y:390};
+    actionText.visible = false;
+    panel.addChild(actionText);
+
+
+
     button1 = new Button({
         label: 'Next Bot Action',
         width: 250,
         height: 150,
         x: 125,
         y: 855,
-        onTap: () => console.log('Play')
+        onTap: () => button1Pressed()
     })
 
     button2 = new Button({
@@ -203,12 +212,51 @@
         height: 150,
         x: 125,
         y: 1005,
-        onTap: () => console.log('Play')
+        onTap: () => button2Pressed()
     })
 
     panel.addChild(button2);
     panel.addChild(button1);
 
+    let warptileNumber = 8;
+
+
+    function button2Pressed(){
+        if (phase.number !== 8)
+            phase.increase(1);
+        else
+            phase.set(1);
+       // button2.disable();
+    }
+
+    function button1Pressed(){
+        if (button2.interactive) {
+            if (phase.number === 4){
+                // draw 0-2 tokens
+                let dice = Math.floor(Math.random()*6) + 1;
+                let draw = 1
+                if (dice === 1) draw = 0;
+                if (dice === 6) draw = 2;
+                if (draw > warptileNumber) draw = warptileNumber;
+                warptileNumber -= draw;
+                actionText.text = "Chronobot selects \n " + draw.toString() + "\n warp tile(s)";
+                actionText.visible = true;
+
+                button2.disable()
+                button1.enable();
+                button1.label.text="Done";
+                button1.settings.onTap = () => waitForUser()
+            }
+        }
+    }
+
+    function waitForUser() {
+        button1.onTap = () => button1Pressed();
+        button1.label.text= "Next Bot Action";
+        actionText.visible = false;
+        button1.disable();
+        button2.enable();
+    }
 
 </script>
 </body>
