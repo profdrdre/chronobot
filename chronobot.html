@@ -226,11 +226,24 @@
             phase.increase(1);
         else
             phase.set(1);
-       // button2.disable();
+        button1.enable();
     }
 
     function button1Pressed(){
-        if (button2.interactive) {
+        if (true) {
+            if (phase.number === 3){
+                let exoNumber = 6;
+                if (era.number >4) exoNumber = 4;
+                actionText.text = "Chronobot \n charged up  \n " + exoNumber.toString() + "\n exosuits";
+                actionText.visible = true;
+
+                exoSuitBack.set(exoNumber);
+                button2.disable()
+                button1.enable();
+                button1.label.text="Got it";
+                button1.settings.onTap = () => waitForUser()
+
+            }
             if (phase.number === 4){
                 // draw 0-2 tokens
                 let dice = Math.floor(Math.random()*6) + 1;
@@ -251,7 +264,7 @@
     }
 
     function waitForUser() {
-        button1.onTap = () => button1Pressed();
+        button1.settings.onTap = () => button1Pressed();
         button1.label.text= "Next Bot Action";
         actionText.visible = false;
         button1.disable();

@@ -54,13 +54,26 @@ class StaticToken extends PIXI.Sprite {
     }
 
     remove() {
-        if (this.number >0) {
+        if (this.number > 0) {
             this.number -= 1;
-            this.text.text=this.number.toString();
-            if (this.number === 0) this.toogle();
-            if (this.number === 0) this.text.visible=false;
+            this.text.text = this.number.toString();
+            if (this.number === 0) {
+                this.toogle();
+                this.text.visible = false;
+            }
         }
     }
+
+   set(value) {
+        this.number = value
+        this.text.text=this.number.toString();
+        if (this.number === 0) this.text.visible=false;
+        else {
+            this.toogle();
+        }
+
+    }
+
 }
 
 
