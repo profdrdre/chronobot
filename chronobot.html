@@ -42,6 +42,16 @@
             }
         }
 
+        validateParadoxes(){
+            if (paradoxTokens[0].number>0 && paradoxTokens[1].number>0 &&
+                paradoxTokens[2].number>0 && anomalyBack.number<3){
+                for(let j=1;j<=3;j++){
+                    paradoxTokens[j-1].remove();
+                }
+                anomalyBack.add();
+            }
+        }
+
 
     }
 
@@ -144,7 +154,7 @@
 
 
     for(let j=1;j<=3;j++){
-        const newToken = new StaticToken(PIXI.Texture.from('images/paradox.png'),paradoxPositions[j-1], 0, false,1);
+        const newToken = new ParadoxToken(PIXI.Texture.from('images/paradox.png'),paradoxPositions[j-1], 0, false,1);
         if (j===2) newToken.angle= 180;
         paradoxTokens.push(newToken);
         board.addChild(newToken);
@@ -185,7 +195,7 @@
     panel.addChild(water);
     era = new Counter({x:220, y:52}, 1, 10);
     panel.addChild(era);
-    phase = new Counter({x:220, y:110}, 1, 10);
+    phase = new Counter({x:220, y:110}, 1, 6);
     panel.addChild(phase);
 
     actionText = new PIXI.Text("action to do \n sddf ",{fontFamily : 'Arial',
@@ -207,7 +217,7 @@
     })
 
     button2 = new Button({
-        label: 'End Phase',
+        label: 'Next Phase',
         width: 250,
         height: 150,
         x: 125,
@@ -222,28 +232,45 @@
 
 
     function button2Pressed(){
-        if (phase.number !== 8)
+        if (phase.number !== 6)
             phase.increase(1);
-        else
-            phase.set(1);
+        else {
+            phase.set(2);
+            era.increase(1);
+        }
         button1.enable();
+
+        if (phase.number === 2){
+            actionText.text = "Chronobot rolls\n for paradoxes last \n add paradoxes\n on board  \n ";
+            actionText.visible = true;
+
+            button2.disable()
+            button1.enable();
+            button1.label.text="Done";
+
+            for(let j=1;j<=3;j++){
+                paradoxTokens[j-1].interactive = true;
+            }
+            button1.settings.onTap = () => waitForUser()
+        }
+        if (phase.number === 3){
+            let exoNumber = 6;
+            if (era.number >4) exoNumber = 4;
+            actionText.text = "Chronobot \n charged up  \n " + exoNumber.toString() + "\n exosuits";
+            actionText.visible = true;
+
+
+            exoSuitBack.set(exoNumber);
+            button2.disable()
+            button1.enable();
+            button1.label.text="Got it";
+            button1.settings.onTap = () => waitForUser()
+
+        }
     }
 
     function button1Pressed(){
         if (true) {
-            if (phase.number === 3){
-                let exoNumber = 6;
-                if (era.number >4) exoNumber = 4;
-                actionText.text = "Chronobot \n charged up  \n " + exoNumber.toString() + "\n exosuits";
-                actionText.visible = true;
-
-                exoSuitBack.set(exoNumber);
-                button2.disable()
-                button1.enable();
-                button1.label.text="Got it";
-                button1.settings.onTap = () => waitForUser()
-
-            }
             if (phase.number === 4){
                 // draw 0-2 tokens
                 let dice = Math.floor(Math.random()*6) + 1;

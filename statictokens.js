@@ -10,7 +10,7 @@ class StaticToken extends PIXI.Sprite {
         this.y = pos.y;
         this.counter = counter;
         this.number = status;
-        this.interactive = true;
+        this.interactive = false;
         if (this.number === 0) this.alpha=0;
         this.targetAlpha = 0;
         this.delta = 0;
@@ -117,3 +117,24 @@ class ResourceToken extends StaticToken {
         }
     }
 }
+
+class ParadoxToken extends StaticToken {
+
+    constructor(texture, pos, status) {
+        super(texture,pos,status, true, 25);
+
+        this.counter = false;
+
+
+
+        this.tokenChanger = () => {
+            this.alpha += this.delta;
+            if (Math.abs(this.targetAlpha - this.alpha) < Math.abs(this.delta)) {
+                this.alpha = this.targetAlpha;
+                automa.ticker.remove(this.tokenChanger);
+                this.parent.validateParadoxes();
+            }
+        }
+    }
+}
+
