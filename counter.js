@@ -19,7 +19,7 @@ class Counter extends PIXI.Container {
     increase(value) {
         if ((this.number + value) <= this.limit) {
             this.number += value;
-            this.text.text = this.number.toString();
+            this.text.text = Math.floor(this.number).toString();
         }
     }
 
@@ -27,14 +27,14 @@ class Counter extends PIXI.Container {
         if (this.number >= value) {
             this.number -= value;
         }
-        this.text.text = this.number.toString();
+        this.text.text = Math.floor(this.number).toString();
     }
 
     set(value) {
         if (this.limit >= value) {
             this.number = value;
         }
-        this.text.text = this.number.toString();
+        this.text.text = Math.floor(this.number).toString();
     }
 
 

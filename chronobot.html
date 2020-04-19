@@ -326,6 +326,13 @@
             actionText.visible = true;
             action = tokens[dice-1].state.name;
             performAction();
+        } else if (phase.number == 6)
+        {
+            actionText.text = "Game ended\n\nadd VP for Buildings\nand Breakthroughs\n to the "+
+                points.number.toString()+ " VPs\n for Chronobot's Score";
+            actionText.visible = true;
+            button1.visible = false;
+            button2.visible = false;
         }
     }
 
@@ -675,10 +682,7 @@
 
     function waitForUser() {
         button2.settings.onTap = () => button2Pressed();
-        //button1.label.text= "Next Bot Action";
         actionText.visible = false;
-        // button1.disable();
-        // button2.enable();
 
         if (phase.number === 2) {
             for (let j = 1; j <= 3; j++) {
@@ -691,9 +695,9 @@
             phase.set(4);
             button2Pressed();
         }
-        else if (phase.number === 4){
+        else if (phase.number === 4) {
             // draw 0-2 tokens
-            dice = Math.floor(Math.random()*6) + 1;
+            dice = Math.floor(Math.random() * 6) + 1;
             let draw = 1
             if (dice === 1) draw = 0;
             if (dice === 6) draw = 2;
@@ -702,26 +706,22 @@
             actionText.text = "Chronobot selects \n " + draw.toString() + "\n warp tile(s)";
             actionText.visible = true;
 
-            button2.label.text="Okay\nNext Phase";
-            button2.settings.onTap = () => waitForUserAgain()
-          //  phase.set(5);
-        } else if  (phase.number === 5) {
-
-            actionText.text = "Clean Up and\n proceed to next round";
-            actionText.visible = true;
-            phase.set(6);
-
-            button1.visible = false;
-            button2.label.text = "Okay\nNext Round";
-            button2.settings.onTap = () => waitForUserAgain()
-        }
-    }
-
-    function waitForUserAgain() {
-        if (phase.number === 4){
+            phase.set(4.5);
+            button2.label.text = "Okay\nNext Phase";
+            button2.settings.onTap = () => waitForUser()
+        } else if (phase.number === 4.5) {
             phase.set(5);
             button2Pressed();
-        } else if (phase.number === 6) {
+        } else if  (phase.number === 5) {
+            actionText.text = "Clean Up and\n proceed to next round";
+            if (era.number === 4) actionText.text += "\n\nDon't forget the \nIMPACT ";
+            actionText.visible = true;
+            phase.set(6);
+            if (era.number >= 5) button1.label.text = "End Game";
+            else button1.visible = false;
+            button2.label.text = "Okay\nNext Era";
+            button2.settings.onTap = () => waitForUser()
+        } else if (phase.number ===6 ){
             phase.set(2);
             era.increase(1)
             button2Pressed();
