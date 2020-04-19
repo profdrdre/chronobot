@@ -30,7 +30,16 @@
                 engineerToken.remove();
                 adminToken.remove();
                 geniusToken.remove();
+                points.increase(5);
+                actionText.text += "\n\nComplete Worker Set\nAdded 5 VP "
             }
+            adminToken.interactive = false;
+            engineerToken.interactive = false;
+            scientistToken.interactive = false;
+            geniusToken.interactive = false;
+            //button0.visible = false;
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
         }
 
         validateResources(){
@@ -39,6 +48,18 @@
                 uraniumToken.remove();
                 goldToken.remove();
                 titaniumToken.remove();
+                actionText.text += "\n\nComplete Resource Set\nAdded 5 VP "
+            }
+            if (selectResources == 0) selectResources +=1;
+            else {
+                neutroniumToken.interactive = false;
+                uraniumToken.interactive = false;
+                goldToken.interactive = false;
+                titaniumToken.interactive = false;
+                //button0.visible = false;
+                button1.label.text="Continue";
+                button1.visible = true;
+                button1.settings.onTap = () => acceptAction();
             }
         }
 
@@ -85,7 +106,7 @@
         {x: 95, y:848},{x: 255, y:848}];
 
     const stateTransition = {1:2, 2:3, 3:1,4:5, 5:6, 6:7, 7:8, 8:9, 9:10, 10:4,11:8,12:13, 13:12};
-    const stateStart = [3,5,7,8,11,12];
+    const stateStart = [1,4,7,8,11,12];
 
 
     for (let i = 1; i<=13; i++) {
@@ -138,6 +159,7 @@
     const supplyPositions ={0:{x:743, y:350},1: {x:810, y:315},2:{x:878, y:315},3: {x:945, y:315}};
     const supplyTransitions ={0:1,1:2,2:3,3:3};
     const supplyToken = new SlideToken(PIXI.Texture.from('images/supply.png'),0, supplyPositions, supplyTransitions );
+    const supplyNeed = [5,6,7,7];
 
     const timetravelPositions ={0:{x:542, y:226},1: {x:608, y:191},2:{x:674, y:191},3: {x:742, y:191},
         4:{x:808, y:191},5: {x:876, y:191},6:{x:942, y:191}};
@@ -242,7 +264,9 @@
 
     let warptileNumber = 8;
     let botActions = 0;
-    let dice = 1
+    let dice = 1;
+    let action =0;
+    let selectResources = 0;
 
     function button2Pressed(){
 
@@ -300,25 +324,22 @@
             dice = Math.floor(Math.random()*6) + 1;
             actionText.text = "Chronobot rolled a " + dice.toString()+"\n This means:\n\n";
             actionText.visible = true;
-
-
-
-
-            performAction(tokens[dice-1].state.name);
-
+            action = tokens[dice-1].state.name;
+            performAction();
         }
-
     }
 
-    function performAction(number){
-        if (number == 1 ){  // Take Power Plant
+    function performAction(){
+        button2.disable();
+        let number = action;
+        if (number === 1 ){  // Take Power Plant
             if (exoSuitBack.number === 0) {
                 actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP "
                 water.increase(2);
                 points.increase(1);
                 button1.label.text="Continue";
                 button1.settings.onTap = () => acceptAction();
-            } else if (powerPlantBack.number == 3){
+            } else if (powerPlantBack.number === 3){
                 actionText.text += "max. Power Plants\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!"
                 water.increase(2);
                 points.increase(1);
@@ -334,11 +355,13 @@
                 button1.settings.onTap = () => spaceOccupied();
             }
         }
-        if (number == 2 ){  // Take Power Plant
+        if (number === 2 ){  // Take Power Plant
             if (timetravelToken.state === 6){
                 actionText.text += "time travel maxed\n Took 2 Water + 1 VP "
                 water.increase(2);
                 points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
             } else
             {
                 actionText.text += "Chronobot advanced\n time travel"
@@ -347,7 +370,7 @@
             button1.label.text="Continue";
             button1.settings.onTap = () => acceptAction();
         }
-        if (number == 3 ){  // Remove Anomaly
+        if (number === 3 ){  // Remove Anomaly
             if (anomalyBack.number === 0){
                 actionText.text += "No Anomalies\n Took 2 Water + 1 VP "
                 water.increase(2);
@@ -377,7 +400,143 @@
             button1.label.text="Continue";
             button1.settings.onTap = () => acceptAction();
         }
-
+        if (number === 4){ //Supply
+            if (supplyToken.state === 3){
+                actionText.text += "Supply maxed\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            }
+            else if (water.number >= supplyNeed[supplyToken.state]){
+                actionText.text += "Chronobot took\nSupply action"
+                supplyToken.advance();
+                water.decrease(supplyNeed[supplyToken.state])
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else {
+                actionText.text += "No Water for Supply\n"
+                action = 9;
+                performAction();
+            }
+        }
+        if (number === 5 ){  // Take Lab
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else if (labBack.number === 3){
+                actionText.text += "max. Labs\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!"
+                water.increase(2);
+                points.increase(1);
+                exoSuitBack.remove();
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else { // ask if space is free
+                actionText.text += "Bot wants to construct\na Lab"
+                button0.visible = true;
+                button0.label.text="Construct Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Construct Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
+        if (number === 6) {
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP";
+                water.increase(2);
+                points.increase(1);
+                button1.label.text = "Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else {
+                actionText.text += "Chronobot takes\nResearch Action";
+                button0.visible = true;
+                button0.label.text="Research Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Research Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
+        if (number === 7) {
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP";
+                water.increase(2);
+                points.increase(1);
+                button1.label.text = "Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else {
+                actionText.text += "Chronobot takes\nMine Action";
+                button0.visible = true;
+                button0.label.text="Mine Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Mine Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
+        if (number === 8 ){  // Take Habitat
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP";
+                water.increase(2);
+                points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else if (habitatBack.number === 3){
+                actionText.text += "max. Habitats\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!"
+                water.increase(2);
+                points.increase(1);
+                exoSuitBack.remove();
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else { // ask if space is free
+                actionText.text += "Bot wants to construct\na Habitat"
+                button0.visible = true;
+                button0.label.text="Construct Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Construct Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
+        if (number === 9 ){  // Recruit
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else { // ask if space is free
+                actionText.text += "Bot wants to recruit\na Worker"
+                button0.visible = true;
+                button0.label.text="Recruit Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Recruit Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
+        if (number === 10 ){  // Take Habitat
+            if (exoSuitBack.number === 0) {
+                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP "
+                water.increase(2);
+                points.increase(1);
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else if (factoryBack.number === 3){
+                actionText.text += "max. Factories\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!"
+                water.increase(2);
+                points.increase(1);
+                exoSuitBack.remove();
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else { // ask if space is free
+                actionText.text += "Bot wants to construct\na Factory"
+                button0.visible = true;
+                button0.label.text="Construct Spot\nFree";
+                button0.settings.onTap = () => spaceFree();
+                button1.label.text="Construct Spot\nOccupied";
+                button1.settings.onTap = () => spaceOccupied();
+            }
+        }
 
         if (number === 12 || number === 11) // take Water
         {
@@ -424,46 +583,88 @@
 
 
         }
-
-        botActions += 1;
-        if (botActions >=3 ){
-            button2.enable();
-        }
-
     }
 
     function acceptAction() {
         tokens[dice-1].advance();
+        button1.visible = true;
         button1.label.text='Next\nBot Action';
         actionText.text = "";
         button1.settings.onTap = () => button1Pressed();
-
+        botActions += 1;
+        if (botActions >= 3) button2.enable();
     }
 
     function spaceFree(){
-        let action = tokens[dice-1].state.name;
+        exoSuitBack.remove(1);
+
         if (action === 1){
             actionText.text += "\n\nTake Power Plant\nfor Exobot";
             powerPlantBack.add(1);
-            exoSuitBack.remove(1);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (action === 5){
+            actionText.text += "\n\nTake Lab\nfor Exobot";
+            labBack.add(1);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (action === 6){
+            let researchDice = Math.floor(Math.random() * 3);
+            const researchItem = ["Round", "Triangular", "Square"];
+            actionText.text += "\n\n Take the\n" + researchItem[researchDice] + "\nResearch Token";
+            button1.label.text = "Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (action === 7 ){
+            actionText.text += "\n\nTake Resources\nfor Exobot and\ntap on board";
+            neutroniumToken.interactive = true;
+            uraniumToken.interactive = true;
+            goldToken.interactive = true;
+            titaniumToken.interactive =true;
+            selectResources = 0;
+            button1.visible = false;
+        }
+        if (action === 8){
+            actionText.text += "\n\nTake Habitat\nfor Exobot";
+            habitatBack.add(1);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
+        }
+        if (action === 9 ){
+            actionText.text += "\n\nTake Worker\nfor Exobot and\ntap on board";
+            adminToken.interactive = true;
+            engineerToken.interactive = true;
+            scientistToken.interactive = true;
+            geniusToken.interactive =true;
+            button1.label.text="No Worker\nAvailable";
+            button1.settings.onTap = () => spaceOccupied();
+            }
+        if (action === 10){
+            actionText.text += "\n\nTake Factory\nfor Exobot";
+            factoryBack.add(1);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
         }
         if (action === 13){
             actionText.text += "\n\nTake Superproject\nfor Exobot";
             superProjectBack.add(1);
-            exoSuitBack.remove(1);
+            button1.label.text="Continue";
+            button1.settings.onTap = () => acceptAction();
         }
         button0.visible = false;
-        button1.label.text="Continue";
-        button1.settings.onTap = () => acceptAction();
+        if (action !== 7) button1.visible = true;
+
     }
 
     function spaceOccupied(){
-        let action = tokens[dice-1].state.name;
-        if (action === 1 || action === 13 ){
-            actionText.text += "\n\nSpace Occupied\n Took 2 Water + 1 VP";
-            water.increase(2);
-            points.increase(1);
-        }
+        // let action = tokens[dice-1].state.name;
+        // if (action === 1 || action === 13 || action ){
+        actionText.text += "\n\nTook 2 Water + 1 VP";
+        water.increase(2);
+        points.increase(1);
+    // }
         button0.visible = false;
         button1.label.text="Continue";
         button1.settings.onTap = () => acceptAction();
@@ -504,6 +705,15 @@
             button2.label.text="Okay\nNext Phase";
             button2.settings.onTap = () => waitForUserAgain()
           //  phase.set(5);
+        } else if  (phase.number === 5) {
+
+            actionText.text = "Clean Up and\n proceed to next round";
+            actionText.visible = true;
+            phase.set(6);
+
+            button1.visible = false;
+            button2.label.text = "Okay\nNext Round";
+            button2.settings.onTap = () => waitForUserAgain()
         }
     }
 
@@ -511,9 +721,12 @@
         if (phase.number === 4){
             phase.set(5);
             button2Pressed();
+        } else if (phase.number === 6) {
+            phase.set(2);
+            era.increase(1)
+            button2Pressed();
         }
     }
-
 
 
 
