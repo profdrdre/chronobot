@@ -15,7 +15,7 @@ class StaticToken extends PIXI.Sprite {
         this.targetAlpha = 0;
         this.delta = 0;
 
-        this.text = new PIXI.Text(this.number.toString(),{fontFamily : 'Arial', dropShadow: 'true',stroke: 'white', fontSize: 32, fontWeight : 'bolder', fill : 0xffffff, align : 'center'});
+        this.text = new PIXI.Text(this.number.toString(),{fontFamily : 'Arial',stroke: 'black', strokeThickness:5, fontSize: 32, fontWeight : 'bolder', fill : 0xffffff, align : 'center'});
         this.text.anchor = {x:.5, y:.5};
         //this.text.visible = counter;
 

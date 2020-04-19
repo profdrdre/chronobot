@@ -5,7 +5,7 @@ class SlideToken extends PIXI.Sprite {
     constructor(texture, startState, positions, transitions) {
         super(texture);
 
-        this.interactive = true;
+        this.interactive = false;
         this.anchor = {x: .5, y:.5}
         this.x = positions[startState].x;
         this.y = positions[startState].y;
