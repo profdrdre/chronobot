@@ -103,7 +103,7 @@ class ResourceToken extends StaticToken {
     constructor(texture, pos, status) {
         super(texture,pos,status, true, 25);
 
-        this.text.x = 30;
+        this.text.x = 26;
         this.text.y = 67;
 
 
