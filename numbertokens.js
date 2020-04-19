@@ -70,7 +70,7 @@ class Token extends PIXI.Container {
         this.state.addToken(this);
 
 
-        this.interactive = true;
+        this.interactive = false;
         this.image.anchor = {x: .5, y:.5}
         this.x = this.state.position.x;
         this.y = this.state.position.y;

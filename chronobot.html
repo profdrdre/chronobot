@@ -48,7 +48,7 @@
                 uraniumToken.remove();
                 goldToken.remove();
                 titaniumToken.remove();
-                actionText.text += "\n\nComplete Resource Set\nAdded 5 VP "
+                actionText.text += "\n\nComplete Resource\nSet -> Added 5 VP "
             }
             if (selectResources == 0) selectResources +=1;
             else {
@@ -620,7 +620,7 @@
         if (action === 6){
             let researchDice = Math.floor(Math.random() * 3);
             const researchItem = ["Round", "Triangular", "Square"];
-            actionText.text += "\n\n Take the\n" + researchItem[researchDice] + "\nResearch Token";
+            actionText.text += "\n\n Take the\n" + researchItem[researchDice] + "\nBreakthrough Token";
             button1.label.text = "Continue";
             button1.settings.onTap = () => acceptAction();
         }
