@@ -9,10 +9,11 @@
     <script src="slidetokens.js"></script>
     <script src="counter.js"></script>
     <script src="button.js"></script>
+    <title>Chronobot</title>
 
 
 </head>
-<body>
+<body style="margin:0;padding:0">
 <canvas id="mycanvas"></canvas>
 <script>
     const global_scaling = .68,
@@ -33,13 +34,6 @@
                 points.increase(5);
                 actionText.text += "\n\nComplete Worker Set\nAdded 5 VP "
             }
-            adminToken.interactive = false;
-            engineerToken.interactive = false;
-            scientistToken.interactive = false;
-            geniusToken.interactive = false;
-            //button0.visible = false;
-            button1.label.text="Continue";
-            button1.settings.onTap = () => acceptAction();
         }
 
         validateResources(){
@@ -48,18 +42,8 @@
                 uraniumToken.remove();
                 goldToken.remove();
                 titaniumToken.remove();
+                points.increase(5);
                 actionText.text += "\n\nComplete Resource\nSet -> Added 5 VP "
-            }
-            if (selectResources == 0) selectResources +=1;
-            else {
-                neutroniumToken.interactive = false;
-                uraniumToken.interactive = false;
-                goldToken.interactive = false;
-                titaniumToken.interactive = false;
-                //button0.visible = false;
-                button1.label.text="Continue";
-                button1.visible = true;
-                button1.settings.onTap = () => acceptAction();
             }
         }
 
@@ -73,7 +57,27 @@
             }
         }
 
-
+        checkIfReady(){
+            if (action === 9) {
+                adminToken.interactive = false;
+                engineerToken.interactive = false;
+                scientistToken.interactive = false;
+                geniusToken.interactive = false;
+                button1.label.text="Continue";
+                button1.settings.onTap = () => acceptAction();
+            } else if (action === 7){
+                if (selectResources === 0) selectResources +=1;
+                else {
+                    neutroniumToken.interactive = false;
+                    uraniumToken.interactive = false;
+                    goldToken.interactive = false;
+                    titaniumToken.interactive = false;
+                    button1.label.text="Continue";
+                    button1.visible = true;
+                    button1.settings.onTap = () => acceptAction();
+                }
+            }
+        }
     }
 
     const canvas = document.getElementById('mycanvas');
@@ -81,7 +85,7 @@
     const automa = new PIXI.Application({
         view: canvas,
         width: (1482+ 250) * global_scaling,
-        height: (1080 + 0) * global_scaling,
+        height: 1080 * global_scaling,
         resolution: 1,
         autoDensity: true
     });
@@ -103,15 +107,6 @@
     let selectResources = 0;
 
 
-
-    // const board_texture = loader.resources['images/board-modified.jpg'].texture;
-    // const board = new Board(board_texture);
-    // board.x = 0;
-    // board.y = 0;
-    //automa.stage.addChild(board);
-
-    // number tokens + their states
-
     const states = {};
     const statePos = [{x: 95, y: 112}, {x: 254, y: 112}, {x: 415, y: 112},
         {x: 95, y: 464}, {x: 255, y: 464}, {x: 415, y: 464}, {x: 573, y: 464},
@@ -130,13 +125,6 @@
     }
 
     const tokens = [];
-    // for (let i = 1; i <= 6; i++) {
-    //     const newToken = new Token(i, PIXI.Texture.from('images/t' + i.toString() + '.png'), states[stateStart[i - 1]]);
-    //     tokens.push(newToken);
-    //     board.addChild(newToken);
-    // }
-
-    // worker token
 
     const workerPositions = [{x: 709, y: 601}, {x: 819, y: 601}, {x: 929, y: 601}, {x: 1037, y: 601}]
 
@@ -149,11 +137,6 @@
     const engineerToken = new WorkerToken(engineer_texture, workerPositions[2], 0);
     const scientistToken = new WorkerToken(scientist_texture, workerPositions[3], 0);
 
-    // board.addChild(geniusToken);
-    // board.addChild(adminToken);
-    // board.addChild(engineerToken);
-    // board.addChild(scientistToken);
-
     const resourcePositions = [{x: 735, y: 460}, {x: 869, y: 460}, {x: 1005, y: 460}, {x: 1137, y: 460}]
     const neutronium_texture = PIXI.Texture.from('images/neutronium.png');
     const uranium_texture = PIXI.Texture.from('images/uranium.png');
@@ -163,11 +146,6 @@
     const uraniumToken = new ResourceToken(uranium_texture, resourcePositions[1], 0);
     const goldToken = new ResourceToken(gold_texture, resourcePositions[2], 0);
     const titaniumToken = new ResourceToken(titanium_texture, resourcePositions[3], 0);
-
-    // board.addChild(neutroniumToken);
-    // board.addChild(uraniumToken);
-    // board.addChild(goldToken);
-    // board.addChild(titaniumToken);
 
     const supplyPositions = {0: {x: 743, y: 350}, 1: {x: 810, y: 315}, 2: {x: 878, y: 315}, 3: {x: 945, y: 315}};
     const supplyTransitions = {0: 1, 1: 2, 2: 3, 3: 3};
@@ -182,20 +160,8 @@
     const timetravelToken = new SlideToken(PIXI.Texture.from('images/timetravel.png'), 0,
         timetravelPositions, timetravelTransitions);
 
-    // board.addChild(supplyToken);
-    // board.addChild(timetravelToken);
-
-
     const paradoxTokens = [];
     const paradoxPositions = [{x: 714, y: 92}, {x: 864, y: 155}, {x: 851, y: 92}]
-
-
-    // for (let j = 1; j <= 3; j++) {
-    //      const newToken = new ParadoxToken(PIXI.Texture.from('images/paradox.png'), paradoxPositions[j - 1], 0, false, 1);
-    //      if (j === 2) newToken.angle = 180;
-    //      paradoxTokens.push(newToken);
-    //      board.addChild(newToken);
-    // }
 
     powerPlantBack = new StaticToken(PIXI.Texture.from('images/power.png'), {x: 750, y: 859}, 0, true, 3);
     powerPlantBack.text.position = {x: 85, y: 170};
@@ -215,30 +181,10 @@
     exoSuitBack = new StaticToken(PIXI.Texture.from('images/exosuit.png'), {x: 1226, y: 45}, 0, true, 6);
     exoSuitBack.text.position = {x: 105, y: 95};
 
-
-    // board.addChild(powerPlantBack);
-    // board.addChild(factoryBack);
-    // board.addChild(habitatBack);
-    // board.addChild(labBack);
-    // board.addChild(anomalyBack);
-    // board.addChild(superProjectBack);
-    // board.addChild(exoSuitBack);
-
-
-    // panel = new PIXI.Sprite(loader.resources['images/sidepanel.png'].texture);
-    // panel.x = 1482;
-    // panel.y = 0;
-    // automa.stage.addChild(panel);
-
     points = new Counter({x: 150, y: 195}, 0, 999);
     water = new Counter({x: 150, y: 275}, 0, 999);
     era = new Counter({x: 220, y: 52}, 1, 10);
     phase = new Counter({x: 220, y: 110}, 1, 6);
-    //
-    // panel.addChild(points);
-    // panel.addChild(water);
-    // panel.addChild(era);
-    // panel.addChild(phase);
 
     actionText = new PIXI.Text("action to do \n sddf ", {
         fontFamily: 'Arial',
@@ -256,7 +202,7 @@
         height: 150,
         x: 125,
         y: 705,
-        onTap: () => button0Pressed()
+        onTap: () => spaceFree()
     })
 
 
@@ -278,9 +224,6 @@
         onTap: () => button2Pressed()
     })
 
-    // panel.addChild(button2);
-    // panel.addChild(button1);
-    // panel.addChild(button0);
     button1.visible = false;
     button0.visible = false;
 
@@ -337,7 +280,7 @@
             actionText.visible = true;
             action = tokens[dice - 1].state.name;
             performAction();
-        } else if (phase.number == 6) {
+        } else if (phase.number === 6) {
             actionText.text = "Game ended\n\nadd VP for Buildings\nand Breakthroughs\n to the " +
                 points.number.toString() + " VPs\n for Chronobot's Score";
             actionText.visible = true;
@@ -725,6 +668,7 @@
             button2.settings.onTap = () => waitForUser()
         } else if (phase.number === 6) {
             phase.set(2);
+            button1.visible = false;
             era.increase(1)
             button2Pressed();
         }

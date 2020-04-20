@@ -45,23 +45,11 @@ class StaticToken extends PIXI.Sprite {
     }
 
     add() {
-        if (this.number !== this.limit) {
-            this.number += 1;
-            if (this.number === 1) this.toogle();
-            this.text.text = this.number.toString();
-            this.text.visible = (this.number > 0) && this.counter;
-        }
+        if (this.number !== this.limit)  this.set(this.number +1);
     }
 
     remove() {
-        if (this.number > 0) {
-            this.number -= 1;
-            this.text.text = this.number.toString();
-            if (this.number === 0) {
-                this.toogle();
-                this.text.visible = false;
-            }
-        }
+        if (this.number > 0) this.set(this.number-1);
     }
 
    set(value) {
@@ -86,15 +74,19 @@ class WorkerToken extends StaticToken {
         this.text.x = 40;
         this.text.y = 95;
 
-
         this.tokenChanger = () => {
             this.alpha += this.delta;
             if (Math.abs(this.targetAlpha - this.alpha) < Math.abs(this.delta)) {
                 this.alpha = this.targetAlpha;
                 automa.ticker.remove(this.tokenChanger);
-                this.parent.validateWorkers();
+                Board.prototype.validateWorkers();
             }
         }
+    }
+
+    set(value){
+        StaticToken.prototype.set.call(this,value);
+        Board.prototype.checkIfReady();
     }
 }
 
@@ -106,17 +98,21 @@ class ResourceToken extends StaticToken {
         this.text.x = 26;
         this.text.y = 67;
 
-
-
         this.tokenChanger = () => {
             this.alpha += this.delta;
             if (Math.abs(this.targetAlpha - this.alpha) < Math.abs(this.delta)) {
                 this.alpha = this.targetAlpha;
                 automa.ticker.remove(this.tokenChanger);
-                this.parent.validateResources();
+                Board.prototype.validateResources();
             }
         }
     }
+
+    set(value){
+        StaticToken.prototype.set.call(this,value);
+        Board.prototype.checkIfReady();
+    }
+
 }
 
 class ParadoxToken extends StaticToken {
@@ -126,14 +122,12 @@ class ParadoxToken extends StaticToken {
 
         this.counter = false;
 
-
-
         this.tokenChanger = () => {
             this.alpha += this.delta;
             if (Math.abs(this.targetAlpha - this.alpha) < Math.abs(this.delta)) {
                 this.alpha = this.targetAlpha;
                 automa.ticker.remove(this.tokenChanger);
-                this.parent.validateParadoxes();
+                Board.prototype.validateParadoxes();
             }
         }
     }
