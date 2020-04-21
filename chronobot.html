@@ -106,10 +106,6 @@
     let action = 0;
     let selectResources = 0;
     let finalTimeTravel = false;
-    let btCircle =0;
-    let btTriangle =0;
-    let btSquare = 0;
-
 
     const states = {};
     const statePos = [{x: 95, y: 112}, {x: 254, y: 112}, {x: 415, y: 112},
@@ -151,10 +147,12 @@
     const goldToken = new ResourceToken(gold_texture, resourcePositions[2], 0);
     const titaniumToken = new ResourceToken(titanium_texture, resourcePositions[3], 0);
 
+
     const supplyPositions = {0: {x: 743, y: 350}, 1: {x: 810, y: 315}, 2: {x: 878, y: 315}, 3: {x: 945, y: 315}};
     const supplyTransitions = {0: 1, 1: 2, 2: 3, 3: 3};
     const supplyToken = new SlideToken(PIXI.Texture.from('images/supply.png'), 0, supplyPositions, supplyTransitions);
     const supplyNeed = [5, 6, 7, 7];
+    const supplyPoints = [0,2,5,8];
 
     const timetravelPositions = {
         0: {x: 542, y: 226}, 1: {x: 608, y: 191}, 2: {x: 674, y: 191}, 3: {x: 742, y: 191},
@@ -167,37 +165,59 @@
     const paradoxTokens = [];
     const paradoxPositions = [{x: 714, y: 92}, {x: 864, y: 155}, {x: 851, y: 92}]
 
-    powerPlantBack = new StaticToken(PIXI.Texture.from('images/power.png'), {x: 750, y: 859}, 0, true, 3);
+    const powerPlantBack = new StaticToken(PIXI.Texture.from('images/power.png'), {x: 750, y: 859}, 0, true, 3);
     powerPlantBack.text.position = {x: 85, y: 170};
-    factoryBack = new StaticToken(PIXI.Texture.from('images/factories.png'), {x: 930, y: 859}, 0, true, 3);
+    const factoryBack = new StaticToken(PIXI.Texture.from('images/factories.png'), {x: 930, y: 859}, 0, true, 3);
     factoryBack.text.position = {x: 85, y: 170};
-    habitatBack = new StaticToken(PIXI.Texture.from('images/habitats.png'), {x: 1108, y: 859}, 0, true, 3);
+    const habitatBack = new StaticToken(PIXI.Texture.from('images/habitats.png'), {x: 1108, y: 859}, 0, true, 3);
     habitatBack.text.position = {x: 85, y: 170};
-    labBack = new StaticToken(PIXI.Texture.from('images/lab.png'), {x: 1286, y: 859}, 0, true, 3);
+    const labBack = new StaticToken(PIXI.Texture.from('images/lab.png'), {x: 1286, y: 859}, 0, true, 3);
     labBack.text.position = {x: 85, y: 170};
-    anomalyBack = new StaticToken(PIXI.Texture.from('images/anomaly.png'), {x: 1010, y: 47}, 0, true, 3);
+    const anomalyBack = new StaticToken(PIXI.Texture.from('images/anomaly.png'), {x: 1010, y: 47}, 0, true, 3);
     anomalyBack.text.position = {x: 85, y: 170};
-    superProjectBack = new StaticToken(loader.resources['images/superproject.png'].texture, {
+    const superProjectBack = new StaticToken(loader.resources['images/superproject.png'].texture, {
         x: 361,
         y: 858
     }, 0, true, 2);
     superProjectBack.text.position = {x: 175, y: 165};
-    exoSuitBack = new StaticToken(PIXI.Texture.from('images/exosuit.png'), {x: 1226, y: 45}, 0, true, 6);
+    const exoSuitBack = new StaticToken(PIXI.Texture.from('images/exosuit.png'), {x: 1226, y: 45}, 0, true, 6);
     exoSuitBack.text.position = {x: 105, y: 95};
 
-    points = new Counter({x: 140, y: 185}, 0, 999);
-    water = new Counter({x: 140, y: 265}, 0, 999);
-    era = new Counter({x: 220, y: 52}, 1, 10);
-    phase = new Counter({x: 220, y: 110}, 1, 6);
+    const powerPlantIcon = new PIXI.Sprite(PIXI.Texture.from('images/powerplantIcon.png'));
+    const factoryIcon = new PIXI.Sprite(PIXI.Texture.from('images/factoryIcon.png'));
+    const habitatIcon = new PIXI.Sprite(PIXI.Texture.from('images/habitatIcon.png'));
+    const labIcon = new PIXI.Sprite(PIXI.Texture.from('images/labIcon.png'));
+
+    const icons = [powerPlantIcon,factoryIcon,habitatIcon,labIcon];
+    for (let i=0; i<=3; i++){
+        icons[i].scale.set(.8);
+        icons[i].x = 100;
+        icons[i].y = 550;
+        icons[i].visible = false;
+    }
+
+
+
+
+    const points = new Counter({x: 140, y: 185}, 0, 999);
+    const water = new Counter({x: 140, y: 265}, 0, 999);
+    const era = new Counter({x: 220, y: 52}, 1, 10);
+    const phase = new Counter({x: 220, y: 110}, 1, 6);
+    const btCircleCounter = new Counter({x: 70, y: 333}, 0, 9);
+    btCircleCounter.scale.set(.7);
+    const btTriangleCounter = new Counter({x: 142, y: 333}, 0, 9);
+    btTriangleCounter.scale.set(.7);
+    const btSquareCounter = new Counter({x: 215, y: 333}, 0, 9);
+    btSquareCounter.scale.set(.7);
+    const researchCounter = [btCircleCounter,btTriangleCounter,btSquareCounter];
 
     actionText = new PIXI.Text("action to do \n sddf ", {
         fontFamily: 'Arial',
         fontSize: 24, fontWeight: 'normal', fill: 0x433656, align: 'center'
     });
     actionText.anchor = {x: .5, y: 0};
-    actionText.position = {x: 125, y: 390};
+    actionText.position = {x: 125, y: 400};
     actionText.visible = false;
-    // panel.addChild(actionText);
 
 
     button0 = new Button({
@@ -285,8 +305,10 @@
             action = tokens[dice - 1].state.name;
             performAction();
         } else if (phase.number === 6) {
-            actionText.text = "Game ended\n\nadd VP for Buildings\nand Breakthroughs\n to the " +
-                points.number.toString() + " VPs\n for Chronobot's Score";
+            const btVp = btSquareCounter.number + btTriangleCounter.number + btCircleCounter.number
+                + 2*  Math.min(btSquareCounter.number,btTriangleCounter.number,btCircleCounter.number);
+            actionText.text = "Game ended\n\n with "+btVp.toString()+" VPs \nfor Breakthrough tiles\n we have " +
+                (btVp+ points.number).toString() + " VPs\n on the board.\n\n Add VP for buildings\nand super projects\nfor final score!";
             actionText.visible = true;
             button1.visible = false;
             button2.visible = false;
@@ -305,7 +327,8 @@
                 button1.label.text = "Continue";
                 button1.settings.onTap = () => acceptAction();
             } else { // ask if space is free
-                actionText.text += "Bot wants to construct\na Power Plant"
+                actionText.text += "Bot wants to construct\na Power Plant\n\n"
+                powerPlantIcon.visible = true;
                 button0.visible = true;
                 button0.label.text = "Construct Spot\nFree";
                 button0.settings.onTap = () => spaceFree();
@@ -384,7 +407,8 @@
                 button1.label.text = "Continue";
                 button1.settings.onTap = () => acceptAction();
             } else { // ask if space is free
-                actionText.text += "Bot wants to construct\na Lab"
+                actionText.text += "Bot wants to construct\na Lab\n\n"
+                labIcon.visible = true;
                 button0.visible = true;
                 button0.label.text = "Construct Spot\nFree";
                 button0.settings.onTap = () => spaceFree();
@@ -392,21 +416,13 @@
                 button1.settings.onTap = () => spaceOccupied();
             }
         }
-        if (number === 6) {
-            if (exoSuitBack.number === 0) {
-                actionText.text += "No Exosuits\nfor Action\n Took 2 Water + 1 VP";
-                water.increase(2);
-                points.increase(1);
-                button1.label.text = "Continue";
-                button1.settings.onTap = () => acceptAction();
-            } else {
-                actionText.text += "Chronobot takes\nResearch Action";
-                button0.visible = true;
-                button0.label.text = "Research Spot\nFree";
-                button0.settings.onTap = () => spaceFree();
-                button1.label.text = "Research Spot\nOccupied";
-                button1.settings.onTap = () => spaceOccupied();
-            }
+        if (number === 6) { // Research
+            actionText.text += "Chronobot takes\nResearch Action";
+            button0.visible = true;
+            button0.label.text = "Research Spot\nFree";
+            button0.settings.onTap = () => spaceFree();
+            button1.label.text = "Research Spot\nOccupied";
+            button1.settings.onTap = () => spaceOccupied();
         }
         if (number === 7) {
             actionText.text += "Chronobot takes\nMine Action";
@@ -425,7 +441,8 @@
                 button1.label.text = "Continue";
                 button1.settings.onTap = () => acceptAction();
             } else { // ask if space is free
-                actionText.text += "Bot wants to construct\na Habitat"
+                actionText.text += "Bot wants to construct\na Habitat\n\n";
+                habitatIcon.visible = true;
                 button0.visible = true;
                 button0.label.text = "Construct Spot\nFree";
                 button0.settings.onTap = () => spaceFree();
@@ -441,16 +458,17 @@
             button1.label.text = "Recruit Spot\nOccupied";
             button1.settings.onTap = () => spaceOccupied();
         }
-        if (number === 10) {  // Take Habitat
+        if (number === 10) {  // Take Factory
              if (factoryBack.number === 3) {
-                actionText.text += "max. Factories\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!"
+                actionText.text += "max. Factories\nreached\n Took 2 Water + 1 VP\nPlace Exosuit!";
                 water.increase(2);
                 points.increase(1);
                 exoSuitBack.remove();
                 button1.label.text = "Continue";
                 button1.settings.onTap = () => acceptAction();
             } else { // ask if space is free
-                actionText.text += "Bot wants to construct\na Factory"
+                actionText.text += "Bot wants to construct\na Factory\n\n";
+                factoryIcon.visible = true;
                 button0.visible = true;
                 button0.label.text = "Construct Spot\nFree";
                 button0.settings.onTap = () => spaceFree();
@@ -500,6 +518,7 @@
     }
 
     function acceptAction() {
+        icons.forEach(icon => icon.visible = false);
         tokens[dice - 1].advance();
         button1.visible = true;
         button1.label.text = 'Next\nBot Action';
@@ -523,7 +542,6 @@
 
     function spaceFree() {
         exoSuitBack.remove(1);
-
         if (action === 1) {
             actionText.text += "\n\nTake Power Plant\nfor Chronobot";
             powerPlantBack.add(1);
@@ -538,8 +556,9 @@
         }
         if (action === 6) {
             let researchDice = Math.floor(Math.random() * 3);
-            const researchItem = ["Round", "Triangular", "Square"];
+            const researchItem = ["Circle", "Triangle", "Square"];
             actionText.text += "\n\n Take the\n" + researchItem[researchDice] + "\nBreakthrough Token";
+            researchCounter[researchDice].increase(1);
             button1.label.text = "Continue";
             button1.settings.onTap = () => acceptAction();
         }
@@ -585,12 +604,9 @@
     }
 
     function spaceOccupied() {
-        // let action = tokens[dice-1].state.name;
-        // if (action === 1 || action === 13 || action ){
         actionText.text += "\n\nTook 2 Water + 1 VP";
         water.increase(2);
         points.increase(1);
-        // }
         button0.visible = false;
         button1.label.text = "Continue";
         button1.settings.onTap = () => acceptAction();
@@ -633,13 +649,16 @@
             if (era.number === 4) actionText.text += "\n\nDon't forget the \nIMPACT ";
             actionText.visible = true;
             phase.increase(1);
-            if (era.number >= 5) button1.label.text = "End Game";
+            if (era.number >= 5) {
+                button1.label.text = "End Game";
+                button1.enable();
+            }
             else button1.visible = false;
             button2.label.text = "Okay\nNext Era";
             button2.settings.onTap = () => waitForUser()
-            if (era.number === 8) button2.disable();
+            if (era.number === 7) button2.disable();
         } else if (phase.number === 6) {
-            if (era.number === 8) button1Pressed();
+            if (era.number === 7) button1Pressed();
             else {
                 phase.set(2);
                 button1.visible = false;
@@ -706,12 +725,21 @@
         panel.addChild(era);
         panel.addChild(phase);
 
+        panel.addChild(btCircleCounter);
+        panel.addChild(btTriangleCounter);
+        panel.addChild(btSquareCounter);
+
+        panel.addChild(powerPlantIcon);
+        panel.addChild(factoryIcon);
+        panel.addChild(habitatIcon);
+        panel.addChild(labIcon);
+
+
         automa.stage.addChild(board);
         automa.stage.addChild(panel);
 
         phase.set(3);
         button2.label.text = "Start Game";
-        era.set(7);
     }
 
 
