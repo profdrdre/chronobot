@@ -106,6 +106,9 @@
     let action = 0;
     let selectResources = 0;
     let finalTimeTravel = false;
+    let btCircle =0;
+    let btTriangle =0;
+    let btSquare = 0;
 
 
     const states = {};
@@ -182,8 +185,8 @@
     exoSuitBack = new StaticToken(PIXI.Texture.from('images/exosuit.png'), {x: 1226, y: 45}, 0, true, 6);
     exoSuitBack.text.position = {x: 105, y: 95};
 
-    points = new Counter({x: 150, y: 195}, 0, 999);
-    water = new Counter({x: 150, y: 275}, 0, 999);
+    points = new Counter({x: 140, y: 185}, 0, 999);
+    water = new Counter({x: 140, y: 265}, 0, 999);
     era = new Counter({x: 220, y: 52}, 1, 10);
     phase = new Counter({x: 220, y: 110}, 1, 6);
 
