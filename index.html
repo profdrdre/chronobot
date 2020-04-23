@@ -1,12 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta http-equiv = "refresh" content = "0; url = chronobot.html" />
+
+<!--<meta http-equiv = "refresh" content = "0; url = chronobot.html" />-->
 <head>
+    <style>
+        body {text-align: center;
+        font-family: Arial;}
+        h1 {
+            color: #533882;
+        }
+        .button {
+            background-color: #533882;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        p {
+            margin-bottom: 50px;
+        }
+        .disclaimer {
+            font-size: small;
+         }
+    </style>
     <meta charset="UTF-8">
     <title>Chronobot</title>
 
 </head>
 <body>
+<div style="width:600px; margin:auto"}>
+<h1> The Chronobot Helper</h1>
+
+<p style="text-align: justify ">
+    This is an <strong>unofficial</strong> implementation for the solo-mode bot for the board game
+    <a href="http://anachronyboardgame.com/">anachrony</a> published by
+    <a href="https://mindclashgames.com/">Mindclash Games</a>. In the solo-mode an algorithm
+    called the Chronobot takes the action of the competing player. The official rules can be found
+    <a href="https://mindclashgames.com/chronobot/">here</a>. The Chronobot helper
+    allows you to play the Chronobot without the need of setting up its board. It also does a lot of the bookkeeping.
+
+</p>
+
+    <button class = "button" onclick="window.location.href = 'chronobot.html'; ">Start the Chronobot Helper</button>
+<p></p>
+<hr >
+    <p class="disclaimer">
+    Disclaimer: I did the programming for myself. No guarantee is given that the bot works perfectly.
+        The source code is available on <a href = "https://github.com/profdrdre/chronobot" >github</a>. I am not affiliated with Mindclash Games. You can
+        contact me through <a href="https://www.reddit.com/message/compose/?to=drxdoc">reddit</a>.
+        Note that this is just a fun hobby project for me.
+    </p>
+</div>
+
 
 </body>
 </html>

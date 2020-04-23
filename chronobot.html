@@ -4,11 +4,12 @@
     <script src="https://pixijs.download/release/pixi.min.js"></script>
 <script src="https://filters.pixijs.download/v3.1.1/pixi-filters.js"></script>
     <script src="numbertokens.js"></script>
-
+    <script src="infotext.js"></script>
     <script src="statictokens.js"></script>
     <script src="slidetokens.js"></script>
     <script src="counter.js"></script>
     <script src="button.js"></script>
+
     <title>Chronobot</title>
 
 
@@ -95,7 +96,8 @@
 
     let loader = PIXI.Loader.shared;
     loader.add('images/board-modified.jpg')
-    loader.add('images/sidepanel.png')
+    loader.add('images/sidepanel-up.png')
+    loader.add('images/sidepanel-down.png')
     loader.add('images/superproject.png')
     loader.onComplete.add(startAutoma);
     loader.load();
@@ -225,7 +227,7 @@
         width: 250,
         height: 150,
         x: 125,
-        y: 705,
+        y: 5,
         onTap: () => spaceFree()
     })
 
@@ -235,7 +237,7 @@
         width: 250,
         height: 150,
         x: 125,
-        y: 855,
+        y: 155,
         onTap: () => button1Pressed()
     })
 
@@ -244,7 +246,7 @@
         width: 250,
         height: 150,
         x: 125,
-        y: 1005,
+        y: 305,
         onTap: () => button2Pressed()
     })
 
@@ -417,7 +419,7 @@
             }
         }
         if (number === 6) { // Research
-            actionText.text += "Chronobot takes\nResearch Action";
+            actionText.text += "Research Action";
             button0.visible = true;
             button0.label.text = "Research Spot\nFree";
             button0.settings.onTap = () => spaceFree();
@@ -425,7 +427,7 @@
             button1.settings.onTap = () => spaceOccupied();
         }
         if (number === 7) {
-            actionText.text += "Chronobot takes\nMine Action";
+            actionText.text += "Mine Action";
             button0.visible = true;
             button0.label.text = "Mine Spot\nFree";
             button0.settings.onTap = () => spaceFree();
@@ -451,7 +453,7 @@
             }
         }
         if (number === 9) {  // Recruit
-            actionText.text += "Bot wants to recruit\na Worker"
+            actionText.text += "Recruit Action"
             button0.visible = true;
             button0.label.text = "Recruit Spot\nFree";
             button0.settings.onTap = () => spaceFree();
@@ -518,6 +520,7 @@
     }
 
     function acceptAction() {
+        action = 0;
         icons.forEach(icon => icon.visible = false);
         tokens[dice - 1].advance();
         button1.visible = true;
@@ -557,13 +560,13 @@
         if (action === 6) {
             let researchDice = Math.floor(Math.random() * 3);
             const researchItem = ["Circle", "Triangle", "Square"];
-            actionText.text += "\n\n Take the\n" + researchItem[researchDice] + "\nBreakthrough Token";
+            actionText.text += "\n\n Took the\n" + researchItem[researchDice] + "\nBreakthrough Token";
             researchCounter[researchDice].increase(1);
             button1.label.text = "Continue";
             button1.settings.onTap = () => acceptAction();
         }
         if (action === 7) {
-            actionText.text += "\n\nTake Resources\nfor Chronobot and\ntap on board";
+            actionText.text += "\n\nTake Resources by\ntapping on board";
             neutroniumToken.interactive = true;
             uraniumToken.interactive = true;
             goldToken.interactive = true;
@@ -578,7 +581,7 @@
             button1.settings.onTap = () => acceptAction();
         }
         if (action === 9) {
-            actionText.text += "\n\nTake Worker\nfor Chronobot and\ntap on board";
+            actionText.text += "\n\nTake Worker by\ntapping on board";
             adminToken.interactive = true;
             engineerToken.interactive = true;
             scientistToken.interactive = true;
@@ -668,11 +671,21 @@
         }
     }
 
+    function helpAsked(){
+        window.alert(infotext[action]);
+    }
+
     function startAutoma() {
 
-        const panel = new PIXI.Sprite(loader.resources['images/sidepanel.png'].texture);
+        const panel = new PIXI.Sprite(loader.resources['images/sidepanel-up.png'].texture);
+        panel.interactive = true;
+        //panel.hitArea = new PIXI.Rectangle(10,150,240,700);
+        panel.on('pointerdown', helpAsked);
         panel.x = 1482;
         panel.y = 0;
+        const buttonPanel = new PIXI.Sprite(loader.resources['images/sidepanel-down.png'].texture);
+        buttonPanel.x = 1482;
+        buttonPanel.y = 700;
 
         const board_texture = loader.resources['images/board-modified.jpg'].texture;
         const board = new Board(board_texture);
@@ -715,9 +728,9 @@
         board.addChild(exoSuitBack);
 
         panel.addChild(actionText);
-        panel.addChild(button2);
-        panel.addChild(button1);
-        panel.addChild(button0);
+        buttonPanel.addChild(button2);
+        buttonPanel.addChild(button1);
+        buttonPanel.addChild(button0);
 
 
         panel.addChild(points);
@@ -737,9 +750,12 @@
 
         automa.stage.addChild(board);
         automa.stage.addChild(panel);
+        automa.stage.addChild(buttonPanel);
+
 
         phase.set(3);
         button2.label.text = "Start Game";
+
     }
 
 
