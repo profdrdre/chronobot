@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="pixi" level="application" />
     <orderEntry type="library" name="pixi-filters" level="application" />
+    <orderEntry type="library" name="micromodal" level="application" />
   </component>
 </module>

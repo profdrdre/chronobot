@@ -32,16 +32,20 @@ class SlideToken extends PIXI.Sprite {
                 automa.ticker.remove(this.tokenMover);
             }
         }
-
     }
 
     advance(){
-        this.state = this.transitions[this.state];
+        this.set(this.transitions[this.state]);
+    }
+
+    set(value){
+        this.state = value;
         this.target = this.positions[this.state];
         this.delta.x = ((this.target.x - this.x) / this.steps);
         this.delta.y = ((this.target.y - this.y) / this.steps);
 
         automa.ticker.add(this.tokenMover);
-
     }
+
+
 }

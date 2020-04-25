@@ -9,7 +9,7 @@ const mine_text = "When taking the Mining action, the\n" +
     "order below. If this Resource is not\n" +
     "available, it takes an available Resource,\n" +
     "following the priority order.\n\n"+
-    "Neutonium > Uranium > Gold > Titanium \n\n"+
+    "Neutronium > Uranium > Gold > Titanium \n\n"+
     "Once it has at least one of all 4 Resource types, it discards\n" +
     "one of each and gains 5 Victory Points."
 
@@ -61,7 +61,7 @@ const supplyRecruit_text =
     "doesn’t have enough Water, it takes a\n" +
     "Recruit Action instead."
 
-const superProject_text = "After Impact: When Constructing a Superproject, the Chronobot takes\n" +
+const superProject_text = "After Impact:\n When Constructing a Superproject, the Chronobot takes\n" +
     "the one with the highest Victory Point value (oldest if tied).\n" +
     "If Construct Superproject is rolled before the Impact, it\n" +
     "receives 1 Victory Point instead, and places no Exosuit.\n" +
@@ -82,7 +82,16 @@ const infotext = {
     8: construct_text,
     9: recruit_text,
     10: construct_text,
-    11: "Just take two Water",
-    12: "Just take two Water",
+    11: "Nothing to do. Water is already taken.",
+    12: "Nothing to do. Water is already taken.",
     13: superProject_text
+}
+
+const modalI = document.getElementById("myModal");
+
+function helpAsked(){
+    //window.alert(infotext[action]);
+    const infoP = document.getElementById("infotext");
+    infoP.innerText = infotext[action];
+    modalI.style.display = "block";
 }

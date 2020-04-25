@@ -1,23 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="css/modal.css">
+
     <script src="https://pixijs.download/release/pixi.min.js"></script>
-<script src="https://filters.pixijs.download/v3.1.1/pixi-filters.js"></script>
+    <script src="https://filters.pixijs.download/v3.1.1/pixi-filters.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js"></script>
     <script src="numbertokens.js"></script>
-    <script src="infotext.js"></script>
     <script src="statictokens.js"></script>
     <script src="slidetokens.js"></script>
     <script src="counter.js"></script>
     <script src="button.js"></script>
-
     <title>Chronobot</title>
-
-
 </head>
-<body style="margin:0;padding:0">
+
+
+
 <canvas id="mycanvas"></canvas>
+<!-- The Modals -->
+<!--InfoWindow-->
+<div id="myModal" class="modalI">
+
+  <!-- Modal content -->
+  <div class="modalI-content">
+    <p id="infotext"></p>
+    <div align="right">
+      <button name="OK" class="button" onclick="modalI.style.display = 'none'" >OK</button>
+    </div>
+  </div>
+
+</div>
+
+<!--SelectWindow-->
+
+<div id="myModal2" class="modalS">
+
+  <!-- Modal content -->
+  <div class="modalS-content">
+    <div class = "selections">
+    <select class="myselect" id="Key" onchange="keySelected()">
+      <option value="none">---</option>
+      <option value="t1">Position Token 1</option>
+      <option value="t2">Position Token 2</option>
+      <option value="t3">Position Token 3</option>
+      <option value="t4">Position Token 4</option>
+      <option value="t5">Position Token 5</option>
+      <option value="t6">Position Token 6</option>
+      <option value="rn"># Neutronium</option>
+      <option value="ru"># Uranium</option>
+      <option value="rg"># Gold</option>
+      <option value="rt"># Titanium</option>
+      <option value="wg"># Geniuses</option>
+      <option value="wa"># Admins</option>
+      <option value="we"># Engineers</option>
+      <option value="ws"># Scientists</option>
+      <option value="xt">Position Time Travel Track</option>
+      <option value="xs">Position Supply Track</option>
+      <option value="exo"># Exosuits</option>
+      <option value="bp"># Power Plants</option>
+      <option value="bf"># Factories</option>
+      <option value="bh"># Habitats</option>
+      <option value="bl"># Labs</option>
+      <option value="ba"># Anomalies</option>
+      <option value="bs"># Superprojects</option>
+      <option value="hc"># Breakthroughs Circle</option>
+      <option value="ht"># Breakthroughs Triangle</option>
+      <option value="hs"># Breakthroughs Square</option>
+      <option value="points">Points</option>
+      <option value="water">Water</option>
+    </select>
+      &emsp;
+      <select class= "myselect" id="Value" disabled>
+    </select>
+    </div>
+    <div align="right">
+      <button name="cancel" class="button" onclick="modalS.style.display = 'none'" >Cancel</button>
+      <button name="ok" class="button" onclick="valueSelected()" >OK</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="editmode.js"></script>
+<script src="infotext.js"></script>
 <script>
-    const global_scaling = .68,
+
+
+  const global_scaling = .68,
     global_steps = 30;
 
     class Board extends PIXI.Sprite{
@@ -98,7 +167,6 @@
     loader.add('images/board-modified.jpg')
     loader.add('images/sidepanel-up.png')
     loader.add('images/sidepanel-down.png')
-    loader.add('images/superproject.png')
     loader.onComplete.add(startAutoma);
     loader.load();
 
@@ -177,7 +245,7 @@
     labBack.text.position = {x: 85, y: 170};
     const anomalyBack = new StaticToken(PIXI.Texture.from('images/anomaly.png'), {x: 1010, y: 47}, 0, true, 3);
     anomalyBack.text.position = {x: 85, y: 170};
-    const superProjectBack = new StaticToken(loader.resources['images/superproject.png'].texture, {
+    const superProjectBack = new StaticToken(PIXI.Texture.from('images/superproject.png'), {
         x: 361,
         y: 858
     }, 0, true, 2);
@@ -198,10 +266,14 @@
         icons[i].visible = false;
     }
 
+   const cogWheelIcon = new PIXI.Sprite(PIXI.Texture.from('images/cogwheel.png'));
+   cogWheelIcon.on('pointerdown',editRequested );
+   cogWheelIcon.x = 10;
+   cogWheelIcon.y = 1010;
+   cogWheelIcon.interactive = true;
 
 
-
-    const points = new Counter({x: 140, y: 185}, 0, 999);
+  const points = new Counter({x: 140, y: 185}, 0, 999);
     const water = new Counter({x: 140, y: 265}, 0, 999);
     const era = new Counter({x: 220, y: 52}, 1, 10);
     const phase = new Counter({x: 220, y: 110}, 1, 6);
@@ -671,9 +743,6 @@
         }
     }
 
-    function helpAsked(){
-        window.alert(infotext[action]);
-    }
 
     function startAutoma() {
 
@@ -726,8 +795,10 @@
         board.addChild(anomalyBack);
         board.addChild(superProjectBack);
         board.addChild(exoSuitBack);
+        board.addChild(cogWheelIcon);
 
-        panel.addChild(actionText);
+
+      panel.addChild(actionText);
         buttonPanel.addChild(button2);
         buttonPanel.addChild(button1);
         buttonPanel.addChild(button0);
@@ -757,9 +828,6 @@
         button2.label.text = "Start Game";
 
     }
-
-
-
 
 </script>
 </body>
