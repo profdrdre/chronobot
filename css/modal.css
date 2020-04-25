@@ -15,7 +15,7 @@
 /* Modal Content/Box */
 .modalI-content {
     background-color: #fefefe;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     color: #533882;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
@@ -40,7 +40,7 @@
 /* Modal Content/Box */
 .modalS-content {
     background-color: #fefefe;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     color: #533882;
     margin: 5% auto; /* 15% from the top and centered */
     padding: 20px;
@@ -52,18 +52,15 @@
 .myselect {
     width: 200px;
     height: 30px;
-    padding : 30px;
     -webkit-border-radius: 0;
     border: 1px solid #999;
     padding: 5px;
     font-size: 14px;
-    round: 0px;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     color: #eee;
     background-color: #533882;
-    border-radius: 0px;
+    border-radius: 0;
     -webkit-appearance: none;
-    -webkit-border-radius: 0px;
 }
 
 .button {

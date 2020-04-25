@@ -126,6 +126,7 @@ function valueSelected(){
             break;
         case "bs":
             superProjectBack.set(parseInt(selector2.value));
+            break;
         case "exo":
             exoSuitBack.set(parseInt(selector2.value));
             break;

@@ -14,7 +14,7 @@
     <title>Chronobot</title>
 </head>
 
-
+<body style="padding:0;margin:0">
 
 <canvas id="mycanvas"></canvas>
 <!-- The Modals -->
@@ -24,7 +24,7 @@
   <!-- Modal content -->
   <div class="modalI-content">
     <p id="infotext"></p>
-    <div align="right">
+    <div style="text-align: right">
       <button name="OK" class="button" onclick="modalI.style.display = 'none'" >OK</button>
     </div>
   </div>
@@ -73,7 +73,7 @@
       <select class= "myselect" id="Value" disabled>
     </select>
     </div>
-    <div align="right">
+    <div style="text-align: right">
       <button name="cancel" class="button" onclick="modalS.style.display = 'none'" >Cancel</button>
       <button name="ok" class="button" onclick="valueSelected()" >OK</button>
     </div>
@@ -85,9 +85,11 @@
 <script src="infotext.js"></script>
 <script>
 
-
-  const global_scaling = .68,
-    global_steps = 30;
+  const split = window.location.href.split("scale=");
+  let scale = parseFloat(split[1]);
+  if (split.length === 1) scale = 0.68; //Default
+  const global_scaling = scale,
+          global_steps = 30;
 
     class Board extends PIXI.Sprite{
 
@@ -231,8 +233,10 @@
     const timetravelTransitions = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 6};
     const timetravelToken = new SlideToken(PIXI.Texture.from('images/timetravel.png'), 0,
         timetravelPositions, timetravelTransitions);
+    const timeTravelPoints = [0,2,4,8,10,12];
 
-    const paradoxTokens = [];
+
+  const paradoxTokens = [];
     const paradoxPositions = [{x: 714, y: 92}, {x: 864, y: 155}, {x: 851, y: 92}]
 
     const powerPlantBack = new StaticToken(PIXI.Texture.from('images/power.png'), {x: 750, y: 859}, 0, true, 3);
@@ -381,8 +385,12 @@
         } else if (phase.number === 6) {
             const btVp = btSquareCounter.number + btTriangleCounter.number + btCircleCounter.number
                 + 2*  Math.min(btSquareCounter.number,btTriangleCounter.number,btCircleCounter.number);
-            actionText.text = "Game ended\n\n with "+btVp.toString()+" VPs \nfor Breakthrough tiles\n we have " +
-                (btVp+ points.number).toString() + " VPs\n on the board.\n\n Add VP for buildings\nand super projects\nfor final score!";
+            actionText.text = "Game ended\n with "+btVp.toString()+" VPs \nfor Breakthrough tiles,\n" +
+                    timeTravelPoints[timetravelToken.state]+ " Time Travel VPs\n"+
+                    "and " +supplyPoints[supplyToken.state]+ " Supply VPs\n"+
+          " we have " +
+                (btVp+ points.number+timeTravelPoints[timetravelToken.state]+supplyPoints[supplyToken.state]).toString() +
+          " VPs\n on the board.\n\n Add VP for buildings\nfor final score!";
             actionText.visible = true;
             button1.visible = false;
             button2.visible = false;
@@ -720,7 +728,7 @@
             phase.increase(1);
             button2Pressed();
         } else if (phase.number === 5) {
-            actionText.text = "Clean Up and\n proceed to next round";
+            actionText.text = "Clean Up and\n proceed to next era";
             if (era.number === 4) actionText.text += "\n\nDon't forget the \nIMPACT ";
             actionText.visible = true;
             phase.increase(1);
@@ -798,7 +806,7 @@
         board.addChild(cogWheelIcon);
 
 
-      panel.addChild(actionText);
+        panel.addChild(actionText);
         buttonPanel.addChild(button2);
         buttonPanel.addChild(button1);
         buttonPanel.addChild(button0);
@@ -825,6 +833,7 @@
 
 
         phase.set(3);
+        era.set(5);
         button2.label.text = "Start Game";
 
     }
